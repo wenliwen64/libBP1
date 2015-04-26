@@ -1,0 +1,15 @@
+close all;
+N=256;
+NW=50/2;
+[E,V] = dpss(N,NW);
+
+t=1:N;
+figure(20);
+hold on;
+for i=NW*2-2:NW*2
+    plot(t,E(:,i),'color',rand(1,3));
+end
+
+figure(21);
+for i=NW*2-2:NW*2
+[Pxx,w] = pmtm(x,nw);

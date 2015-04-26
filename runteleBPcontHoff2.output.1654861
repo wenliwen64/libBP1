@@ -1,0 +1,28 @@
+Warning: Name is nonexistent or not a directory: /home/lsmeng/matlab/cvx
+[> In path at 110
+  In addpath at 87
+  In startup at 1] 
+Warning: Name is nonexistent or not a directory: /home/lsmeng/matlab/cvx/structures
+[> In path at 110
+  In addpath at 87
+  In startup at 2] 
+Warning: Name is nonexistent or not a directory: /home/lsmeng/matlab/cvx/lib
+[> In path at 110
+  In addpath at 87
+  In startup at 3] 
+Warning: Name is nonexistent or not a directory: /home/lsmeng/matlab/cvx/functions
+[> In path at 110
+  In addpath at 87
+  In startup at 4] 
+Warning: Name is nonexistent or not a directory: /home/lsmeng/matlab/cvx/commands
+[> In path at 110
+  In addpath at 87
+  In startup at 5] 
+Warning: Name is nonexistent or not a directory: /home/lsmeng/matlab/cvx/builtins
+[> In path at 110
+  In addpath at 87
+  In startup at 6] 
+Error using runteleBPcontHoff2 (line 5)
+Not enough input arguments.
+
+MATLAB:minrhs

@@ -1,0 +1,51 @@
+function ret=orderDistance(ret)
+
+%order the data with epicentral distances
+nel=length(ret.rdis);
+B=1:nel;% the index vector
+temp=sortrows([B' ret.rdis(B)'],2);
+B1=(temp(:,1));
+
+x_1=ret.x(B1,:);
+r_1(:,1)=ret.r(B1,1);
+r_1(:,2)=ret.r(B1,2);
+rdis_1=ret.rdis(B1);
+az_1=ret.az(B1);
+nm_1=ret.nm(B1,:);
+t1_1=ret.t1(B1);
+
+ret.x=x_1;
+ret.r=r_1;
+ret.az=az_1;
+ret.nm=nm_1;
+ret.rdis=rdis_1;
+ret.t1=t1_1;
+
+        
+        
+        
+        
+        
+        %     if Opr.orderDistancebool==true
+%         
+%         temp=sortrows([B' rdis(B)'],2);
+%         B1=(temp(:,1));
+%         
+%         
+%         x_1=x(B1,:);
+%         
+%         %r=zeros(nel,2);
+%         r_1(:,1)=r(B1,1);
+%         r_1(:,2)=r(B1,2);
+%         rdis_1=rdis(B1);
+%         az_1=az(B1);
+%         nm_1=nm(B1);
+%         clear x r rdis az nm;
+%         x=x_1;
+%         r=r_1;
+%         az=az_1;
+%         nm=nm_1;
+%         rdis=rdis_1;
+%         
+%         
+%     end

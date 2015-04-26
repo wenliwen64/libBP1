@@ -1,0 +1,9 @@
+function [uxx uyy val]=tprfaz(ux,uy,Pm,bux,buy,az) 
+slowpeak=sqrt(bux^2+buy^2);
+% slowpeak=1/5;
+obaz=az-180;
+tbaz=obaz+22.65*cosd(obaz+50.4);
+az=tbaz+180;
+uxx=slowpeak*cosd(az);
+uyy=slowpeak*sind(az);
+val=interp2(ux,uy,Pm',uxx,uyy);

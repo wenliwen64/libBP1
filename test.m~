@@ -1,0 +1,13 @@
+opr=readAllSac()
+opr.lat0=18.45;
+opr.lon0=-72.45;
+opr.sr=40;
+opr.ori=140;
+opr.snrFilterbool=true;
+opr.snrFilter(2:3)=[0.5 2];
+opr.bpbool=true;
+opr.bp=[0.25 1];
+opr.distanceFilterbool=true;
+opr.distanceFilter=[0 28.5];
+ret=readAllSac('~/matlab/haitiUS/TXTA/');
+plotAll(ret);

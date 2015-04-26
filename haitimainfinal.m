@@ -1,0 +1,408 @@
+close all;
+clear all;
+station=['FUNV';'CRUV';'BAUV';'VIRV';'DABV';'MONV';'SIQV';'SANV';'QARV';'CURV';'CAPV';'SOCV';'CUPV';'JACV';'RIOV';'TURV';'TERV';'ELOV';'LUEV';'PCRV';'PRGV';'MAPV'];
+ lat=[10.4692   10.6163    8.9433   10.5028   10.9218   11.9550   10.6488    9.5008   10.2065   10.0130    7.8647    8.2842   10.0563   11.0872    8.0618   10.4495    9.9637    7.0010 5.8432   10.1633    8.7600    9.8308];
+ lon=-[66.8102   63.1842   68.0415   72.4060   70.6362   69.9703   69.8078   69.5363   70.5237   69.9612   72.3143   70.8563   65.7877   68.8298   61.8170   67.8395   69.1917   69.4833 61.4612   64.5897   64.6455   68.457];
+
+%load /home/lsmeng/matlab/haitiUS/gf1/isap91_13/phtimefk;
+load ptimes;
+ttime=tt;
+clear tt;
+lat0=18.45;
+lon0=-72.45;
+
+sr=100;
+load haiticoast.dat;
+
+%%%%%%%%%%%%%%%% for main event
+ load venx;
+ %B=1:22;
+% xs=x;
+    %%%%%%%%%%%%% M6 aftershock
+% load retven60;
+% xs=retven60.x;
+% lat=retven60.lat;
+% lon=retven60.lon;
+% station=retven60.sta;
+% B=[1:8 10:11 13 15:16]%1:16%[1:8 10:13 15 16];
+%%%%%%%%%%%%%%%%%%%
+
+       B=[ 6     5     4    14     7     9    10    17    16     8    22     1    12     3    13    11    20    18     2    21    15    19];
+                  B=[ 6     5         14     7     9    10    17    16     8        1       3    13           18        15    ];
+%            B=[ 6     5         14     7     9    10    17    16     8    22     1    12     3    13           18        15    ];
+%      B=[1:3 5 6:10 12:19 21];
+% B =[3 11 13 10 18 1 14 21 8 12 16];
+%    B=[1 2 3 5 6 7 8 10 13:19 22];%y2
+%   B=[6 5 14 7 9 10 17 16 8 22 1 3]%y4;
+
+nel=length(B);
+x0=xs(B,:);
+r=zeros(nel,2);
+r(:,1)=lon(B);
+r(:,2)=lat(B);
+rdis=distance11(r(:,2),r(:,1),lat0,lon0,1)*180/pi;
+nm=station(B,:);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% x01=x0;
+    for i=1:nel
+          x01(i,:)=decimate(x0(i,:),5);
+          
+    end
+    clear x0;
+    x0=x01;
+    sr=sr/5;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[BB,AA]=butter(4,[0.2 0.7]/(sr/2));
+for i=1:nel
+    
+    x0(i,:)=filter(BB,AA,x0(i,:));
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+x2=x0;
+% t3=(0:length(x0)-1)/sr;
+%         figure(22);
+% hold on;
+% for jj=1:nel
+% plot(t3,x0(jj,:)/std(x0(jj,179*sr:185*sr))/2+(jj));
+% %plot(t3,x0(jj,:)/std(x0(jj,280*sr:320*sr))/8+(jj),'r');
+% end
+% xlim([175 185]);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+   y2=zeros(1,length(B));
+x01=x0;
+%           load /home/lsmeng/matlab/chile/figfirday/y2ven.mat;
+%           y2=y2-y2(1);
+
+%       load /home/lsmeng/matlab/chile/figfirday/y3ven.mat;
+%        y2=y2+y3;
+%      load ~/matlab/haitiUS/savetmp/y4;
+%      y2=y4;
+%        load ~/matlab/haitiUS/savetmp/y22;
+%        y2=y22;
+%          load ~/matlab/haitiUS/savetmp/y11;
+%          y2=timeshift;
+%            load ~/matlab/haitiUS/savetmp/y2;
+%            y2=y2;
+%              load ~/matlab/haitiUS/savetmp/y22_0207;
+%              y2=y22_0207;
+    x01=zeros(nel,length(x0));
+    for i=1:nel
+          x01(i,:)=specshift(x0(i,:),y2(i)*sr);
+          x2(i,:)=specshift(x2(i,:),y2(i)*sr);
+    end
+     x0=x01;
+%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+t3=(0:length(x0)-1)/sr;
+        figure(22);
+hold on;
+for jj=1:nel
+plot(t3,x0(jj,:)/std(x0(jj,180*sr:185*sr))/4+(jj));
+% plot(t3,x0(jj,:)/std(x0(jj,179*sr:185*sr))/8+(jj));
+% plot(t3,x0(jj,:)/std(x0(jj,179*sr:185*sr))/2+(jj));
+%plot(t3,x0(jj,:)/std(x0(jj,280*sr:320*sr))/8+(jj),'r');
+end
+xlim([175 240]);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+    t3=(0:length(x0)-1)/sr;
+   [nel len ]=size(x0);
+   time=zeros(nel,len);
+    for i=1:nel
+        time(i,:)=t3;
+    end
+    
+
+
+  Opr=readAllSac();
+    Opr.lat0=18.45;
+    Opr.lon0=-72.45;
+    Opr.sr=sr;
+  ret=struct('r',r,...%the position of the stations
+    'nm',char(nm),...%name of the stations
+    'rdis',rdis,...%epicentral distance
+    'az',0,...
+    'time',time,...% time matrix
+    't1',0,...% theoretical arrival times
+    'x',x0,...% original data 
+    'x1',x0,...
+    'x2',x2,...
+    'sr',sr,...% sample rate
+    'ori',180,...% origin time
+    'opr',Opr);% attached the option object to read parameters.
+
+
+figure(5);
+plotSta(ret);
+% % % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%short period
+alignopr=seismoAlign();
+alignopr.win=8;
+alignopr.ts11=175;
+alignopr.range=2;
+alignopr.bpbool=0;
+alignopr.refst=2;
+alignopr.lt=200;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%long period
+alignopr.win=6;
+alignopr.ts11=180;
+alignopr.range=3;
+      ret=seismoAlign(ret,alignopr);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ret=seismoAlignMulit(ret,alignopr);
+% figure(201);
+% mxcr=ret.mxcr;
+% for i=1:nel
+%     for j=1:nel
+%         if i>=j
+%            mxcr(i,j)=ret.mxcr(j,i);
+%         end
+%     end
+% end
+% corrmapmat(mxcr,ret.nm);
+%  title('Correlation Map, Stations Regrouped by Cross Correlation Coefficient');
+%  xlabel('Scale Gives Cross Correlation Coefficient for Each Station Pair') ;
+% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%d
+% 
+% timeshift=ret.timeshift;
+% %X=zeros(nel*(nel-1)/2+1,nel);
+% X=zeros(1,nel);
+% Y=zeros(1,1);
+% count=1;
+% for i=1:nel
+%     for j=1:nel
+%         
+%         if i<j
+%             Y(count)=timeshift(i,j);
+%             X(count,i)=1;
+%             X(count,j)=-1;
+%             count=count+1;
+%         end
+%     end
+% end
+% 
+% X(count,:)=ones(1,nel);
+% Y(count)=0;
+% timeshift1=robustfit(X,Y)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% y4=ret.timeshift;
+% Bnm=ret.nm;
+% Bb=B;
+% save ~/matlab/haitiUS/savetmp/y4 y4 Bnm Bb;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% 
+%     figure(21);
+%        t3=(0:length(x0)-1)/sr;
+% hold on;
+% for jj=1:nel
+% %plot(t3,x01(jj,:)/std(x01(jj,280*sr:320*sr))/8+(jj));
+% plot(t3,x0(jj,:)/std(x0(jj,180*sr:185*sr))/8+(jj),'r');
+% %plot(t3,x0(jj,:)/max(x0(jj,:))/8+(jj),'r');
+% end
+% 
+% xlim([170 250]);
+%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        figure(23);
+hold on;
+for jj=1:nel
+% plot(t3,x01(jj,:)/std(x01(jj,179*sr:185*sr))+(jj));
+ plot(t3,ret.x1(jj,:)/std(x2(jj,180*sr:190*sr))/2+(jj));
+  plot(t3,x2(jj,:)/std(x2(jj,180*sr:190*sr))/2+(jj),'r');
+% plot(t3,ret.x1(jj,:)/std(ret.x1(1,180*sr:190*sr))+(jj));
+%plot(t3,x0(jj,:)/std(x0(jj,280*sr:320*sr))/8+(jj),'r');
+end
+xlim([175 200]);
+  ylim([0 24])
+    clear x0;
+    x0=x01;
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                figure(24);
+hold on;
+for jj=1:nel
+% plot(t3,x01(jj,:)/std(x01(jj,179*sr:185*sr))+(jj));
+ plot(t3,ret.x1(jj,:)/std(x2(jj,180*sr:190*sr))/6+(jj));
+%   plot(t3,x0(jj,:)/std(x0(jj,180*sr:190*sr))/2+(jj),'r');
+% plot(t3,ret.x1(jj,:)/std(ret.x1(1,180*sr:190*sr))+(jj));
+% plot(t3,x0(jj,:)/std(x0(jj,280*sr:320*sr))/8+(jj),'r');
+end
+xlim([178 210]);
+  ylim([0-1 nel+1]);
+
+   text(ones(1,nel)*180,(1:nel)+0.05,ret.nm(1:nel,:))
+
+%   set(z(1:n),'FontSize',fs)
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    figure(25);
+hold on;
+for jj=1:nel
+%  plot(t3,x01(jj,:)/std(x01(jj,179*sr:185*sr))+(jj));
+%  plot(t3,ret.x1(jj,:)/std(x2(jj,180*sr:190*sr))/2+(jj));
+  plot(t3,x2(jj,:)/std(x2(jj,180*sr:185*sr))/2+(jj),'r');
+% plot(t3,ret.x1(jj,:)/std(ret.x1(1,180*sr:190*sr))+(jj));
+% plot(t3,x0(jj,:)/std(x0(jj,280*sr:320*sr))/8+(jj),'r');
+end
+xlim([175 200]);
+  ylim([0 24])
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    figure(26);
+hold on;
+for jj=1:nel
+% plot(t3,x01(jj,:)/std(x01(jj,179*sr:185*sr))+(jj));
+ plot(t3,ret.x1(jj,:)/std(x2(jj,180*sr:190*sr))/16+(rdis(jj)));
+%   plot(t3,x0(jj,:)/std(x0(jj,180*sr:190*sr))/2+(jj),'r');
+% plot(t3,ret.x1(jj,:)/std(ret.x1(1,180*sr:190*sr))+(jj));
+% plot(t3,x0(jj,:)/std(x0(jj,280*sr:320*sr))/8+(jj),'r');
+end
+xlim([178 210]);
+  ylim([6 13]);
+
+   text(ones(1,nel)*180,(rdis)+0.05,ret.nm(1:nel,:))
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   set(z(1:n),'FontSize',fs)
+    
+%     
+% 
+% 
+%     
+%     
+%     
+%     
+%     
+%     
+%     ret.x1=ret.x2;%whether to use unfilter%     
+% 
+% 2
+%     
+%     
+%     
+%     
+%     
+%     
+%     ret.x1=ret.x2;%whether to use unfiltered data
+%   
+% 
+plotopr=plotAll();
+plotopr.normal=[-50 50 4];
+plotopr.view=[0 50];
+plotopr.plotAlignbool=true;
+
+% plotAll(ret,plotopr);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+plotSpec(ret,10,50,1);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+NN=0;
+doaopr=doaAll1();
+doaopr.method='music';
+doaopr.freqBand=[0.4 0.4 0.4]*4/4;
+doaopr.ps=40;
+doaopr.qs=40;
+doaopr.step=0.5;
+doaopr.begin=-30;
+doaopr.over=10;
+doaopr.windowLength=30;
+doaopr.slidingWindowViewRange=[-20 20 8];
+doaopr.uxRange=[-1.3 0.9];
+doaopr.uyRange=[-1.0 1.0];
+doaopr.projectionRange=[-60 100];
+doaopr.constantBias=0;
+%doaopr.beamOrientation=-(18.5558-18.4888)/(72.4744-72.4313);
+doaopr.beamOrientation=118;
+doaopr.saveProj=NN;
+doaopr.Mm=2;
+doaopr.saveDir='/home/lsmeng/matlab/haitiUS/gf/save_half_main_14/';
+
+     doaAll1(ret,doaopr);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% 
+% 
+% 
+% 
+% plotopr=plotAll();
+% plotopr.normal=[-50 50 4];
+% plotopr.view=[0 50];
+% plotopr.plotAlignbool=true;
+% 
+% % plotAll(ret,plotopr);
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% plotSpec(ret,10,50,1);
+% 
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% NN=0;
+% doaopr=doaAll1();
+% doaopr.method='music';
+% doaopr.freqBand=[0.5 0.5 0.5];
+% doaopr.ps=40;
+% doaopr.qs=40;
+% doaopr.step=2;
+% doaopr.begin=-30;
+% doaopr.over=5;
+% doaopr.windowLength=60;
+% doaopr.slidingWindowViewRange=[-20 20 8];
+% doaopr.uxRange=[-1.5 0.9];5
+% doaopr.uyRange=[-1.2 1.2];
+% doaopr.projectionRange=[-20 100];
+% doaopr.constantBias=0;
+% %doaopr.beamOrientation=-(18.5558-18.4888)/(72.4744-72.4313);
+% doaopr.beamOrientation=122;
+% doaopr.saveProj=NN;
+% doaopr.Mm=2;
+% doaopr.saveDir='/home/lsmeng/matlab/haitiUS/gf/save_half/';
+% 
+% doaAll1(ret,doaopr);
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+

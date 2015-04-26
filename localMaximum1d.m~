@@ -1,0 +1,14 @@
+function [x y] = localMaximum1(Pm)
+[m=size(Pm);
+x=0;
+y=0;
+k=1;
+for i=2:m-1
+  
+        if Pm(i,j)>max([Pm(i-1,j-1) Pm(i,j-1) Pm(i-1,j) Pm(i+1,j)  Pm(i,j+1) Pm(i+1,j+1)])
+            x(k)=i;
+            y(k)=j;
+            k=k+1;
+        end
+ 
+end

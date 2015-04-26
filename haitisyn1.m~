@@ -1,0 +1,142 @@
+close all;
+clear all;
+distline=zeros(1,5);
+maxvaldist=zeros(1,5);
+kkkt=0;
+for NNN1=[ 3:3]
+    kkkt=kkkt+1;
+    NN=3;
+    NNN=0;%timeshifted synthetic away from ori
+    %NNN1=3;
+    %close all;
+cd '/home/lsmeng/matlab/haitiUS/gf'
+system(['makesynm.sh ' num2str(NN) ' ' num2str(NN*3)]);
+opr=readAllSac();
+opr.FileList='filelistm';
+opr.lat0=18.45;
+opr.lon0=-72.45;
+opr.sr=40;
+opr.ori=100;
+opr.nrt=0;
+%opr.align.timeShiftKnown=load ('/home/lsmeng/matlab/haitiUS/gf/syn/arrival000')-200;
+opr.align.shiftT1bool=true;
+opr.alignbool=true;
+opr.bpbool=true;
+opr.bp=[0.25 1];
+opr.resample=0;
+
+ret=readAllSac('/home/lsmeng/matlab/haitiUS/gf/syn/',opr);
+opr.sr=ret.sr;
+%ptimes=load('/home/lsmeng/matlab/haitiUS/gf1/isap91_13/phtimefk');
+ptimes=load('ptimes');
+ttime=ptimes.tt;
+rr=ptimes.rr;
+[nel len]=size(ret.x);
+   
+t0=phtime(1,opr.lat0,opr.lon0,opr.lat0-0.0308*(NNN),opr.lon0-0.0675*(NNN),ret.r(:,2),ret.r(:,1),rr,ttime)
+t01=phtime(1,opr.lat0,opr.lon0,opr.lat0-0.0308*(NNN1),opr.lon0-0.0675*(NNN1),ret.r(:,2),ret.r(:,1),rr,ttime)
+%%%%%%%%%%%%%%%%%%%%%%%%%%% sin
+t3=(1:length(ret.x(1,:)))/opr.sr;
+% ret.x(1,:)=sin(2*pi*0.3*t3);
+% ret.x1(1,:)=sin(2*pi*0.3*t3);
+%%%%%%%%%%%%%%%%%%%%%% same waveform
+x2=ret.x*0;
+x3=ret.x*0;
+x21=ret.x*0;
+x31=ret.x*0;
+tr=(NNN1)*3;
+for i=1:nel
+    x2(i,:)=specshift(ret.x(i,:),-(t0(i)-t0(1))*opr.sr);
+    x21(i,:)=specshift(ret.x1(i,:),-(t0(i)-t0(1))*opr.sr);
+end
+for i=1:nel
+    x3(i,:)=specshift(ret.x(i,:),-(t01(i)-t01(1))*opr.sr-tr*opr.sr);
+    x31(i,:)=specshift(ret.x1(i,:),-(t01(i)-t01(1))*opr.sr-tr*opr.sr);
+end
+for i=1:nel
+%    ret.x(i,:)=x2(i,:)+x3(i,:);
+%    ret.x1(i,:)=x21(i,:)+x31(i,:);
+   ret.x(i,:)=x3(i,:);
+   ret.x1(i,:)=x31(i,:);
+end
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% for i=1:nel
+%     ret.x(i,:)=sign(ret.x(i,:)).*(abs(ret.x(i,:))).^(1/2);
+%     ret.x1(i,:)=sign(ret.x(i,:)).*(abs(ret.x1(i,:))).^(1/2);
+%  end
+%%%%%%%%%%%%%%%%%%%%%%%%%%                       
+% ret.x=ret.x1;
+% alignopr=seismoAlign();
+% alignopr.win=2;
+% alignopr.ts11=199;
+% alignopr.range=0.5;
+% alignopr.bp=[5 10];
+% ret=seismoAlign(ret,alignopr);
+
+%%%%%%%%%%%%%%%%%
+plotSta(ret);
+
+plotopr=plotAll();
+plotopr.normal=[  100 160 2];
+plotopr.view=[ 100 160];
+plotopr.plotAlignbool=true;
+
+plotAll(ret,plotopr);
+
+doaopr=doaAll1();
+doaopr.method='music';
+doaopr.freqBand=[0.3 0.3 0.3];
+doaopr.ps=40;
+doaopr.qs=40;
+doaopr.step=5;
+%doaopr.begin=110+NN*3;
+doaopr.begin=40;
+doaopr.over=doaopr.begin+60;
+
+doaopr.windowLength=60;
+doaopr.Nw=3;
+plotSpec(ret,doaopr.begin+opr.ori,doaopr.begin+opr.ori+doaopr.windowLength,1);
+doaopr.slidingWindowViewRange=[20 20 4];
+doaopr.uxRange=[-1.5 0.9];
+doaopr.uyRange=[-1.2 1.2];
+doaopr.projectionRange=[-20 100];
+doaopr.beamOrientation=120;
+doaopr.constantBias=0;
+%doaopr.beamOrientation=-(18.5558-18.4888)/(72.4744-72.4313);
+%'beamOrientation',atan2((18.4086-18.243),-(72.4084-72.3259))*180/pi,...% the beam direction lat/lon if you want to project to the fault line 
+%doaopr.beamOrientation=atan2((18.4086-18.243),-(72.4084-72.3259))*180/pi;
+doaopr.saveProj=NNN1;
+doaopr.Mm=2;
+doaopr.saveDir='/home/lsmeng/matlab/haitiUS/gf/save_half/';
+
+ret=doaAll1(ret,doaopr);
+maxvaldist(kkkt)=ret.maxvaldist;
+distline(kkkt)=sign(NNN1)*distance11(opr.lat0,opr.lon0,opr.lat0-0.0308*(NNN1),opr.lon0-0.0675*(NNN1),6371);
+end
+figure(101);
+plot(distline,maxvaldist);
+% polyfit(distline,maxvaldist,1)
+% figure(101);
+% hold on;
+% plot(distline,0.9585*distline+5.9039)
+
+
+%%%%%%%%%%%%
+% 
+%                     method: 'stacking'
+%                   freqBand: [0.4000 1]
+%                         ps: 20
+%                         qs: 20
+%                    uxRange: [-3 2]
+%                    uyRange: [-3 2]
+%                      begin: 5
+%                       over: 8
+%                       step: 1
+%               windowLength: 5
+%                         Mm: 'rank'
+%                   ncontour: 20
+%     slidingWindowViewRange: [-20 20 8]
+%            beamOrientation: -0.6177
+%           faultOrientation: 0.3394
+%            projectionRange: [1 100]

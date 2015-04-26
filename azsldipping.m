@@ -1,0 +1,10 @@
+function [daz,dsl]=azsldipping(str,dip,taz,tsl,v1,v2)
+l=[ cosd(taz)*tsl sind(taz)*tsl sqrt(1/v2^2-tsl^2)]*v2
+n=[-sind(dip)*sind(str) sind(dip)*cosd(str) -cosd(dip)]
+ctheta1=sum(n.*l)
+ctheta2=sqrt(1-(v2/v1)^2*(1-ctheta1^2))
+v=(v2/v1)*l+((v2/v1)*ctheta1+ctheta2)*n
+vaz=180/pi*atan2(v(2),v(1))
+vsl=1/v2*sqrt(v(1)^2+v(2)^2)
+daz=vaz-taz;
+dsl=vsl-tsl;

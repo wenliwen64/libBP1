@@ -1,0 +1,21 @@
+clear ret;
+opr=readAllSac();
+opr.lat0=18.45;
+opr.lon0=-72.45;
+opr.sr=40;
+opr.ori=140;
+opr.snrFilterbool=true;
+%opr.snrFilter(1)=0.001;
+opr.snrFilter(2:3)=[0.5 2];
+opr.bpbool=true;
+opr.bp=[0.5 2];
+opr.distanceFilterbool=true;
+opr.distanceFilter=[26 28.5];
+opr.orderDistancebool=true;
+
+ret=readAllSac('~/matlab/haitiUS/TXTA/',opr);
+plotAll(ret);
+plotSta(ret);
+doaOpr=doaAll();
+doaOpr.method='music';
+doaAll(ret,doaOpr);

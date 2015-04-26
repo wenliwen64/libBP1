@@ -1,0 +1,20 @@
+UGE job for runteleBPcontHoff2 built Fri Apr 11 10:49:19 PDT 2014
+
+  runteleBPcontHoff2 directory:
+    /u/home/l/lsmeng/cont/libBP1
+  Submitted to UGE:
+    Job 1655287, queue: idre.q, sub: Fri Apr 11 11:11:07 2014
+  SCRATCH directory:
+    /work/1655287.1.idre.q
+
+runteleBPcontHoff2 started on:   n58
+runteleBPcontHoff2 started at:   Fri Apr 11 11:14:08 PDT 2014
+
+runteleBPcontHoff2  >& runteleBPcontHoff2.output.1655287
+
+4.140u 0.349s 0:04.58 97.8%	0+0k 16+640io 0pf+0w
+
+runteleBPcontHoff2 finished at:  Fri Apr 11 11:14:13 PDT 2014
+
+Scratch files in /work/1655287.1.idre.q deleted:
+total 0

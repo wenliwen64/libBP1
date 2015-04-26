@@ -1,0 +1,24 @@
+clear all;
+load xx1;
+x=xx1(2,:);
+sr=5;
+t=(0:length(x)-1)/sr;
+figure(1);
+plot(t,x);
+%[B,A]=butter(4,[0.5 1.5]/(sr/2));
+%x1=filter(B,A,x);
+x1=x;
+%xlim off;
+xlim([100 300]);
+t0=120;
+t1=130;
+N=(t1-t0)*sr+1;
+ff=linspace(0,sr,N);
+fs=abs(fft(x(t0*sr:t1*sr)));
+fs1=abs(fft(x1(t0*sr:t1*sr)));
+cs=cmtm2(x(t0*sr:t1*sr),x(t0*sr:t1*sr),2);
+[ps w]=pmtm(x(t0*sr:t1*sr));
+w=w*sr/2/pi
+figure(2)
+plot(ff,fs,'r',ff,fs1,'b',ff,abs(cs),'g',w,abs(ps),'r');
+xlim([0 sr/2]);
