@@ -97,6 +97,10 @@ box on;
 % end
 print('-dpdf','-r300','BPcatalogTimeSeries_nchile.pdf'); 
 saveas(gcf, 'BPcatalogTimeSeries_nchile_0_6', 'jpg');
+figure;
+hold on;
+scatter(lofile(LOCS0,3), logfile(LOCS0,2),(Mag(LOCS0,4)-4).^2*20,'markertype', 'o', logfile(LOCS0, 4));
+scatter(eqinfo(:,8), eqinfo(:, 7),(eqinfo(:,9)-4).^2*20,'markertype', 's', 'MarkerFaceColor', catalogtime());
 
 %============points in catalog having corresponding pb ponits, picked by hand===========
 ind_cat = zeros(1, 100);
