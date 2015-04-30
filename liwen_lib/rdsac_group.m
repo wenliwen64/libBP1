@@ -1,5 +1,5 @@
-function sh = rdsac_group(directory)
-    char(directory)
+function rdsac_group(directory)
+    char(directory);
     list = ls(char(directory));
     list = strread(list, '%s', 'delimiter', '\n');
     for i = 1:numel(list)
@@ -7,4 +7,5 @@ function sh = rdsac_group(directory)
     end
     
     save('sh.mat', 'sh', '-v7.3');
+    clear all;
 end
