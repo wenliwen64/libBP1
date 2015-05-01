@@ -16,7 +16,7 @@ opr.sr=10;
 %  save Mexico032012;
 % load Mexico032012_1;
 % load el5;
-load nchile0.mat;
+load 201504251500_240.v1.mat;
 %   load can2;
 %  ret.xori=ret.x;
  ret.x=ret.xori;
@@ -143,7 +143,7 @@ align.lt=400;
 align.range=5;
 align.refst=145;
 %    align.cutoff=0.8;
-  ret=seismoAlign(ret,align);
+ret=seismoAlign(ret,align);
 % save 2012Mexico_1
 align=seismoAlign();
 align.ts11=398;
@@ -198,4 +198,4 @@ xlim([-100 100]);
 % %  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %  save USleft2;
 % % save HonshuEU5
- save('nchile1','ret');
+ save('nepal_align1','ret');
