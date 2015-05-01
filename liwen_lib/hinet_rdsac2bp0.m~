@@ -1,11 +1,13 @@
 % convert sac to mat file. 
 % usage: hinet_rdsac2bp0('./*sac', 'result.mat')
 function hinet_rdsac2bp0(directory, matname)
-    ret = dir(directory);
-    
-    for i = 1:numel(ret)
-        sh(i) = rdsac(ret(i).name);
+    list = ls(directory);
+    list = strread(list, '%s', 'delimiter', '\n');
+    for i = 1:numel(list)
+        sh(i) = rdsac(list{i});
     end
+    
+    path_nm, 
     save(matname, 'sh', '-v7.3');
     clear all;
 end

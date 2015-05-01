@@ -1,56 +1,67 @@
-function hinet_rdsac2bp1(filename)
+function hinet_rdsac2bp0(filename)
+    display(filename);
     load(filename);
-    opr = readAllSac();
-    opr.bpbool = false;
-    opr.lon0 = new_str.lon0;
-    opr.lat0 = new_str.lat0;
-    opr.dep0 = new_str.dep0;
-    opr.bp = [0.01 1];
-    opr.snrFilterbool = false;
-    opr.ori = 300;
-    opr.snrFilter = [0.1, 0.5, 2, -20, -10, 100, 130];
-    opr.sr = 10;
+    %calibration event location
+    %this is for nepal_2015 main shock
+    lon0 = 84.7079;
+    lat0 = 28.1473;
+    dep0 = 15;
     
-    %new_str has been loaded 
-    ret = new_str;
-    ret.opr = opr;
-    ret.timeshiftall = zeros(1, length(ret.lon));
-    ret.lon = round(ret.lon*1e4) / 1e4;
+    nsta = numel(sh);
+    npts = numel(sh(1).d);
+
+    r = nan(nsta ,2);
+    lat = nan(1, nsta);
+    lon = nan(1, nsta);
+    rdis = nan(1, nsta);
+    az = nan(1, nsta);
+    sta_nm = char(zeros(nsta, 8));
+    t1 = nan(1, nsta);
     
-    if isfield(ret, 'time')
-        ret = rmfield(ret, 'time');
+    npts_dec = numel(decimate(sh(1).d, 4));
+    npts_dec
+    xori = nan(nsta, npts_dec);
+    size(xori)
+    
+    for j = 1:nsta
+        lon(j) = sh(j).HEADER.STLO;
+        r(j, 1) = lon(j);
+        lat(j) = sh(j).HEADER.STLA;
+        r(j, 2) = lat(j);
+        
+        len_nm = numel(sh(j).HEADER.KSTNM);
+        sta_nm(j, 1:len_nm) = sh(j).HEADER.KSTNM;
+        
+        down_sample = decimate(sh(j).d, 4);
+        down_sample = down_sample - mean(down_sample);
+        npts_temp = numel(down_sample);
+        xori(j, 1:npts_temp) = down_sample;
+        
+        styr = sh(j).HEADER.NZYEAR;
+        stdy = sh(j).HEADER.NZJDAY;
+        sthr = sh(j).HEADER.NZHOUR;
+        stmi = sh(j).HEADER.NZMIN;
+        stse = sh(j).HEADER.NZSEC;
+   
+        dateno = datenum(styr, 1, stdy, sthr, stmi, stse);
+        t1(j) = dateno;
+        [rdis(j), az(j)] = distance(r(j, 2), r(j, 1), lat0, lon0);
     end
     
-    load('ptimes.mat');
-    shiftP = interp1(rr, tt, ret.rdis);
-    nsta = ret.n;
-    
-    for i = 1:nsta
-        ret.xori(i, :) = specshift(ret.xori(i, :), ret.sr*(shiftP(i) - shiftP(1)));
-        ret.nf(i) = std(ret.xori(i, 100:4000));
-        ret.xori(i, :) = ret.xori(i, :) / ret.nf(i);
-    end
-    
-    ret.lon0 = ret.opr.lon0;
-    ret.lat0 = ret.opr.lat0;
-    ret.dep0 = ret.opr.dep0;
-    ret.parr = 20;
-    ret.begin = 0;
-    ret.end = round(size(ret.xori, 2)/ret.sr) - 20;
-    ret.step = 1;
-    ret.ps = 40;
-    ret.qs = 40;
-    ret.lonrange = [-3 3];
-    ret.latrange = [-4 2];
-    ret.fl = 0.5;
-    ret.fh = 2;
-    ret.fs = 2;
-    ret.win = 5;
-    ret.dirname = 'nepal_hn';
-    ret.Nw = 3;
+    new_str.r = r;
+    new_str.nm = sta_nm;
+    new_str.lat = lat;
+    new_str.lon = lon;
+    new_str.rdis = rdis;
+    new_str.az = az;
+    new_str.t1 = t1;
+    new_str.sr = 10;
+    new_str.n = nsta;
+    new_str.xori = xori;
+    new_str.lat0 = lat0;
+    new_str.lon0 = lon0;
+    new_str.dep0 = dep0;
     
     [f_dir, f_nm, f_ext] = fileparts(filename);
-    I = findstr('.', f_nm);
-    f_nm = f_nm(1:I(end));
-    save([f_nm 'v1.mat'], 'ret', '-v7.3');
+    save([f_nm '.v1.mat'], 'new_str');    
 end
