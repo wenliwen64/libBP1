@@ -16,7 +16,7 @@ opr.sr=10;
 %  save Mexico032012;
 % load Mexico032012_1;
 % load el5;
-load 201504251500_240.v1.mat;
+load /home/lwen/Documents/seis_research/raw_data/Hinet_nepal.v1.mat;
 %   load can2;
 %  ret.xori=ret.x;
  ret.x=ret.xori;

@@ -14,7 +14,7 @@ function hinet_rdsac2bp1(filename)
     %new_str has been loaded 
     ret = new_str;
     ret.opr = opr;
-    ret.timeshiftal = zeros(1, length(ret.lon));
+    ret.timeshiftall = zeros(1, length(ret.lon));
     ret.lon = round(ret.lon*1e4) / 1e4;
     
     if isfield(ret, 'time')
