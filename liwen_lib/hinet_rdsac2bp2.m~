@@ -23,10 +23,8 @@ function hinet_rdsac2bp1(filename)
     
     load('ptimes.mat');
     shiftP = interp1(rr, tt, ret.rdis);
-%TODO:
-    debug.shiftP = shiftP;
-    debug.rdis = ret.rdis;
-    
+%%
+%%
     nsta = ret.n;
     
     for i = 1:nsta
@@ -57,5 +55,4 @@ function hinet_rdsac2bp1(filename)
     I = findstr('.', f_nm);
     f_nm = f_nm(1:I(end));
     save([f_nm 'v2.mat'], 'ret', '-v7.3');
-    save('debug.mat', 'debug');
 end
