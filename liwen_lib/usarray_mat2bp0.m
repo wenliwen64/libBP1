@@ -1,14 +1,15 @@
-function hinet_rdsac2bp0(filename)
+function usarray_mat2bp0(filename, lat_ep, lon_ep, dep_ep)
+% 38.297,  142.372 is the tohoku earthquake location
     display(filename);
     load(filename);
     %calibration event location
     %this is for nepal_2015 main shock
-    lon0 = 84.7079;
-    lat0 = 28.1473;
-    dep0 = 15;
+    lon0 = lon_ep;
+    lat0 = lat_ep;
+    dep0 = dep_ep;
     
-    nsta = numel(sh);
-    npts = numel(sh(1).d);
+    nsta = numel(Traces);
+    npts = numel(Traces(1).data);
 
     r = nan(nsta ,2);
     lat = nan(1, nsta);
@@ -18,33 +19,26 @@ function hinet_rdsac2bp0(filename)
     sta_nm = char(zeros(nsta, 8));
     t1 = nan(1, nsta);
     
-    npts_dec = numel(decimate(sh(1).d, 4));
+    npts_dec = numel(decimate(Traces(1).data, 4));
     npts_dec
     xori = zeros(nsta, npts_dec);
     size(xori)
     
     for j = 1:nsta
-        lon(j) = sh(j).HEADER.STLO;
+        lon(j) = Traces(j).longitude;
         r(j, 1) = lon(j);
-        lat(j) = sh(j).HEADER.STLA;
+        lat(j) = Traces(j).latitude;
         r(j, 2) = lat(j);
         
-        len_nm = numel(sh(j).HEADER.KSTNM);
-        sta_nm(j, 1:len_nm) = sh(j).HEADER.KSTNM;
+        len_nm = numel(Traces(j).station);
+        sta_nm(j, 1:len_nm) = Traces(j).station;
         
-        down_sample = decimate(sh(j).d, 4);
+        down_sample = decimate(Traces(j).data, 4);
         down_sample = down_sample - mean(down_sample);
         npts_temp = numel(down_sample);
         xori(j, 1:npts_temp) = down_sample;
-        
-        styr = sh(j).HEADER.NZYEAR;
-        stdy = sh(j).HEADER.NZJDAY;
-        sthr = sh(j).HEADER.NZHOUR;
-        stmi = sh(j).HEADER.NZMIN;
-        stse = sh(j).HEADER.NZSEC;
-   
-        dateno = datenum(styr, 1, stdy, sthr, stmi, stse);
-        t1(j) = dateno;
+  
+        t1(j) = Traces(j).startTime;
         [rdis(j), az(j)] = distance(r(j, 2), r(j, 1), lat0, lon0);
     end
     
@@ -63,5 +57,5 @@ function hinet_rdsac2bp0(filename)
     new_str.dep0 = dep0;
     
     [f_dir, f_nm, f_ext] = fileparts(filename);
-    save([f_nm '.v1.mat'], 'new_str');    
+    save([f_nm '.v1.mat'], 'new_str');
 end

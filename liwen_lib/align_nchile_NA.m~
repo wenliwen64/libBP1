@@ -147,7 +147,7 @@ end
 % % 
 align=seismoAlign();
 align.ts11=1770;
-align.win=50;
+align.win=10;
 align.lt=400;
 align.range=5;
 align.refst=145;
