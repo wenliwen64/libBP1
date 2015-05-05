@@ -1,30 +1,33 @@
-function runteleBPcontHoff3(dataDIR)
+%%========================================
+% input the .mat file name like "2014_04_02_6_10"
+%%========================================
+function runteleBPcontHoff3_tohoku(filename)
 
    bh = 0;
    eh = 4;
 
-   libDIR = '/u/home/w/wenliwen/newFolder/libBP1/';
-   dataDIR0 = '/u/home/w/wenliwen/bp_data/';
+   libDIR = '/home/liwen/Documents/seis_research/libBP1/';
+   dataDIR0 = '/home/liwen/Documents/seis_research/raw_data/tohoku_2011_na/';
 %=======what is the use of this file?==============
    %load([libDIR 'nchileCali.mat']);
 %=======ret1 and ret stand for? Go to read_nchile_input_liwen=================
    %ret1=ret;
-   disp(dataDIR);
-   load([dataDIR0 dataDIR]);
+   disp(filename);
+   load([dataDIR0 filename]);
 %===matchshiftAll = ?===========================
    %ret1.lon=round(ret1.lon*1e4)/1e4;
    disp('test');
-   ret.nf=ones(1,length(ret.lon)); % nf is the normalization factor to normalize each staions amplitude
-   %[ret ret1]=matchshiftAll(ret,ret1);
-n=length(ret.lon);
-for i=1:n
+   ret.nf = ones(1, length(ret.lon)); % nf is the normalization factor to normalize each staions amplitude
+   %[ret1 ret]=matchshiftAll(ret1,ret);
+   n = ret.n;
+   for i=1:n
   % ret.xori(i,:)=specshift(ret.xori(i,:),ret.sr*(ret1.recordtime(i)-ret1.recordtime(100))*24*3600);
-end
-load([ libDIR 'ptimes.mat']);
+   end
+   load('ptimes.mat');
 %%%%%%%%%%%%%%%%%
-ret.latrange=[-2 1];
-ret.lonrange=[-1 2];
-tbuff=20;
+   ret.latrange=[-2.5 1.5];
+   ret.lonrange=[-1.5 2.5];
+   tbuff=20;
 %ret.begin1=360*bh
 %ret.end1=360*eh;
 %bh=str2double(bh);
@@ -32,28 +35,32 @@ tbuff=20;
 %if ischar(bh)
 %disp(['test'])
 %end
-ret.begin=max([3600*bh tbuff ]);% begin = 0 is from the first second in seismograms
-ret.end=min([3600*eh length(ret.xori)/ret.sr-tbuff]);
+   ret.begin=max([3600*bh tbuff ]);% begin = 0 is from the first second in seismograms
+   
+   ret.end=min([3600*eh length(ret.xori)/ret.sr-tbuff]);
 %ret.begin1
 %ret.end1
-dataDIR;
-bh
-eh
-disp(['time begin=' num2str(ret.begin) 'end=' num2str(ret.end)]);
+   filename;
+   disp(['time begin=' num2str(ret.begin) 'end=' num2str(ret.end)]);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-x0=ret.xori;
-ret=rmfield(ret,'xori');
-r=ret.r;% what is the "r" 2*n array lon lat
-lon0=ret.lon0;
-lat0=ret.lat0;
-sr=ret.sr;% sr = sample rate
+   x0 = ret.xori;
+   ret = rmfield(ret,'xori');
+   r = ret.r;% what is the "r" 2*n array lon lat
+   lon0 = ret.lon0;
+%lon0=93.063;%-70.813;
+%lon0 = -70/813;
+   lat0 = ret.lat0;
+%lat0=2.311;%-19.642;
+%lat0 = -19.642;
+   sr = ret.sr;% sr = sample rate
 %parr=ret.parr;% time shift at beginning here is 20s. 
-parr = 0;
-begin=ret.begin;
-over=ret.end;% time end of the time series(
-step=ret.step;% step is the time increment step, here is 1s.
-ps=ret.ps;% backprojection region grid row number 
-qs=ret.qs;% backprojection region grid column number
+    parr = 0;
+   begin=ret.begin;
+    over=ret.end;% time end of the time series(
+%step=ret.step;% step is the time increment step, here is 1s.
+step=1;
+ps=40%ret.ps;% backprojection region grid row number 
+qs=40%ret.qs;% backprojection region grid column number
 display(['ps=' num2str(ps)]);
 display(['ps=' num2str(qs)]);
 uxRange=ret.latrange;% back projection region size
@@ -74,8 +81,10 @@ uy=linspace(uyRange(1)+lon0,uyRange(2)+lon0,qs);
 %system(['mkdir ' saveDir]);
 %cd(saveDir);
 %fileID=fopen(['0411logfile' dataDIR '_' num2str(bh) '_' num2str(eh)],'w');
-fileID=fopen(['0614logfile' '_' dataDIR(24:26) '_' num2str(bh) '_' num2str(eh)],'w');
-
+I = findstr('.', filename);
+logname = filename(1:I(end)-1);
+fileID=fopen(['/home/liwen/Documents/seis_research/tohoku_2011_usarray/data/logfile_', logname], 'w');
+logname
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    [BB,AA]=butter(4,[fl fh]/(sr/2));% butterworth filter data, the second parameter is the cutoff frequencies
    for i=1:n
@@ -95,6 +104,7 @@ fileID=fopen(['0614logfile' '_' dataDIR(24:26) '_' num2str(bh) '_' num2str(eh)],
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    rawData = single(x0');% return the single precision number 
    offset = repmat((0:stationNum-1)*sampleNum, [win*sr, 1]);% stationNum = n. What is win? asscociated with multitaper?  repmat is replicate and tile array
+  % display(offset);
    %display(['offset size = ' offset]);
    for tl=parr+begin:step:parr+over% why add back the time shift
        th=tl+win;
@@ -114,10 +124,10 @@ fileID=fopen(['0614logfile' '_' dataDIR(24:26) '_' num2str(bh) '_' num2str(eh)],
 			sd=tlib(:,p,q)';
 			
 			dataInd = bsxfun(@plus, dataIndTemp, sd*sr);% timeshift data ======
-			
+			 %display(dataInd);
 			dataInd = floor(dataInd + offset);
             %display('dataInd = ');
-            %display(dataInd);
+            
           
 			y = rawData(dataInd)';% Each row is time series corresponding to one station.
          
@@ -159,4 +169,4 @@ fileID=fopen(['0614logfile' '_' dataDIR(24:26) '_' num2str(bh) '_' num2str(eh)],
 	
 end
 fclose(fileID);
-save('parret','ret');
+save('/home/liwen/Documents/seis_research/tohoku_2011_usarray/data/parret','ret');

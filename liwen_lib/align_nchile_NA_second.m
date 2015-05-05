@@ -2,21 +2,23 @@ clear all;
 % close all;
 % cd /home/lsmeng/matlab/bpsynthetic/;
 opr=readAllSac();
-opr.bpbool=false;
-opr.lon0=-70.817;
-opr.lat0=-19.642;
-opr.bp=[0.01 1];
-opr.snrFilterbool=false;
-opr.ori=300;
-opr.snrFilter=[0.1 0.5 2 -20 -10 100 130];
-opr.sr=10;
+
 % ret=readAllSac('/Users/lsmeng/wk/matlab/bp/nchile/data/',opr);
 
 % 
 %  save Mexico032012;
 % load Mexico032012_1;
 % load el5;
-load nchile1.mat;
+load tohoku_align1.mat;
+opr.bpbool=false;
+opr.lon0=ret.lat0;
+opr.lat0=ret.lon0;
+opr.bp=[0.01 1];
+opr.snrFilterbool=false;
+opr.ori=300;
+opr.snrFilter=[0.1 0.5 2 -20 -10 100 130];
+opr.sr=10;
+
 %   load can2;
 %  ret.xori=ret.x;
  ret.x=ret.xori;
@@ -146,7 +148,7 @@ align.refst=145;
 %   ret=seismoAlign(ret,align);
 % save 2012Mexico_1
 align=seismoAlign();
-align.ts11=298;
+align.ts11=1784;
 align.win=7;
 align.lt=100;
 align.range=1;
@@ -200,7 +202,7 @@ print('-dpdf','-r300','seismogram.pdf')
 % %  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %  save USleft2;
 % % save HonshuEU5
-save('nchile2','ret');
+save('tohoku2','ret');
 ret=rmfield(ret,'x');
-save('nchileCali','ret');
-!cp nchileCali.mat ../
+save('tohoku2_cali','ret');
+%!cp nchileCali.mat ../

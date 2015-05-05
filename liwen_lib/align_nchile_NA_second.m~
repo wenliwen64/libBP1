@@ -1,23 +1,15 @@
 clear all;
-close all;
+% close all;
 % cd /home/lsmeng/matlab/bpsynthetic/;
 opr=readAllSac();
-opr.bpbool=false;
-opr.lon0=-70.817;
-opr.lat0=-19.642;
-opr.bp=[0.01 1];
-opr.snrFilterbool=false;
-opr.ori=300;
-opr.snrFilter=[0.1 0.5 2 -20 -10 100 130];
-opr.sr=10;
+
 % ret=readAllSac('/Users/lsmeng/wk/matlab/bp/nchile/data/',opr);
 
 % 
 %  save Mexico032012;
 % load Mexico032012_1;
 % load el5;
-%load /home/lwen/Documents/seis_research/raw_data/Hinet_nepal.v2.mat;
-load ./IF20110311T053000_20110311T071000.v2.mat;
+load tohoku_align1.mat;
 opr.bpbool=false;
 opr.lon0=ret.lat0;
 opr.lat0=ret.lon0;
@@ -26,6 +18,7 @@ opr.snrFilterbool=false;
 opr.ori=300;
 opr.snrFilter=[0.1 0.5 2 -20 -10 100 130];
 opr.sr=10;
+
 %   load can2;
 %  ret.xori=ret.x;
  ret.x=ret.xori;
@@ -113,15 +106,15 @@ plotSta(ret);
 %     
 %     %%%%%%%%%%%%%%%%%%%%%%
 
-fl=0.25;
-fh=1;
+fl=0.5;
+fh=2;
 [BB,AA]=butter(4,[fl fh]/(ret.sr/2));
 for i=1:n
     
      ret.x(i,:)=filter(BB,AA,ret.x(i,:));
 end
 for i=1:n
-  
+     ret.nf(i)=std(ret.x(i,10*ret.sr:400*ret.sr));%normalization factor at this frequency and time range
      ret.x(i,:)=ret.x(i,:)/std(ret.x(i,10*ret.sr:400*ret.sr));
 end
 % %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,22 +139,22 @@ end
 % %%%%%%%%%%%%%%%%%%%%%%%%
 % % 
 align=seismoAlign();
-align.ts11=1784;
-align.win=50;
+align.ts11=300;
+align.win=10;
 align.lt=400;
 align.range=5;
 align.refst=145;
 %    align.cutoff=0.8;
-ret=seismoAlign(ret,align);
+%   ret=seismoAlign(ret,align);
 % save 2012Mexico_1
 align=seismoAlign();
-align.ts11=398;
-align.win=10;
+align.ts11=1784;
+align.win=7;
 align.lt=100;
 align.range=1;
 align.refst=0;
    align.cutoff=0.8;
-%   ret=seismoAlign(ret,align);
+   ret=seismoAlign(ret,align);
 % ret=seismoAlign(ret,align);
 % 
 %   ret=seismoAlignMulit2(ret,align);
@@ -181,9 +174,11 @@ ret.ht=350;
 % h=figure(10);
 % % title(['aftershock' num2str(fl) '-' num2str(fh) 'Hz'] )
 % % subplot(3,2,1);
-figure(10);
+figure(12);
 plotAll1(ret);
-xlim([-100 100]);
+xlim([-20 40]);
+print('-dpdf','-r300','seismogram.pdf') 
+
 % ret=pickAll(ret,1,13);
 % 
 % % saveas(h,['aftershock_data' num2str(fl) '_' num2str(fh) 'Hz.eps'],'epsc');
@@ -207,4 +202,7 @@ xlim([-100 100]);
 % %  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %  save USleft2;
 % % save HonshuEU5
- save('tohoku_align1','ret');
+save('nchile2','ret');
+ret=rmfield(ret,'x');
+save('nchileCali','ret');
+!cp nchileCali.mat ../
