@@ -1,6 +1,9 @@
 function loc_new_grid = retracing_test(loc_sta, loc_grid, depth)
      ret = taupTime('prem', depth, 'P', 'sta', loc_sta, 'evt', loc_grid);
-     sin_takeoff_angle = ret.rayParam/(6400*2*3.1415926/360)*6.2/57.3;
+     ret.rayParam
+    
+     sin_takeoff_angle = ret(1).rayParam / (6400*2*3.1415926/360) * 6.8 / 57.3; % mysterious constant 57.3
+     asind(sin_takeoff_angle)
      cos_takeoff_angle = sqrt(1 - sin_takeoff_angle^2);
      [dk, dd, daze, dazs] = distaz(loc_sta(1), loc_sta(2), loc_grid(1), loc_grid(2));
      ini_vec = [1*sin_takeoff_angle*sind(dazs), 1*sin_takeoff_angle*cosd(dazs), -1*cos_takeoff_angle];
