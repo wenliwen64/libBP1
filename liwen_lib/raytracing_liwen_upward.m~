@@ -1,11 +1,11 @@
-function raytracing_liwen(ini_point, ini_vec, v0_point, moho_norm_vec)
+function [I1_2, refracted_vec, I] = raytracing_liwen_upward(ini_point, ini_vec, v0_point, moho_norm_vec, evt_point)
     %ini_point = ini_point_in;
     %v0_point = [x_v0, y_v0, -dep_v0];
     %moho_norm_vec = [x_norm, y_norm, z_norm];
     %ini_vec = [ini_vec_x, ini_vec_y, ini_vec_z];
     P1_point = ini_point + ini_vec;
     
-    n_index = 8.6/6.2;
+    n_index = 8.6/6.2;  
     moho_norm_flat_vec = [0, 0, 1];
     [I, check] = plane_line_intersect(moho_norm_vec, v0_point, ini_point, P1_point);
     [I0, check0] = plane_line_intersect(moho_norm_flat_vec, v0_point, ini_point, P1_point);
@@ -13,7 +13,7 @@ function raytracing_liwen(ini_point, ini_vec, v0_point, moho_norm_vec)
     refracted_vec = refracted(ini_vec, moho_norm_vec, n_index);
     refracted_vec0 = refracted(ini_vec, [0, 0, 1], n_index);
 
-    surface_point = [0, 0, 0];
+    surface_point = evt_point;% [0, 0, -evt_depth];
     surface_norm_vec = [0, 0, 1];
     
     I1_2 = plane_line_intersect(surface_norm_vec, surface_point, I,  refracted_vec+I);
@@ -22,7 +22,7 @@ function raytracing_liwen(ini_point, ini_vec, v0_point, moho_norm_vec)
     d = -dot(moho_norm_vec, v0_point);
     [xx, yy] = ndgrid(-50:50, -50:50);
     
-    surface_zz = 0*xx + 0*yy;
+    surface_zz = surface_point(3) * ones(size(xx,1), size(xx, 2)); %0*xx + 0*yy;
     moho_zz = (-moho_norm_vec(1)*xx - moho_norm_vec(2)*yy - d) / moho_norm_vec(3);
     moho_flat_zz = v0_point(3)*ones(size(xx,1), size(xx, 2));
     inci_zz = ini_point(3) * ones(size(xx, 1), size(yy, 2));
