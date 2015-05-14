@@ -21,7 +21,7 @@ function [loc_third_point, refracted_vec0] = raytracing_liwen_downward(ini_point
     [I0_0, check0] = plane_line_intersect(moho_norm_vec, v0_point, ini_point, P1_point);
     
     % Calculate the refracted ray's directional vector
-    refracted_vec0 = refracted(ini_vec, [0, 0, 1], n_index);
+    refracted_vec0 = refracted(ini_vec, moho_norm_vec, n_index);
 
     third_layer_point = [0, 0, -third_layer_depth];
     third_layer_norm_vec = [0, 0, 1];
@@ -29,6 +29,10 @@ function [loc_third_point, refracted_vec0] = raytracing_liwen_downward(ini_point
     %I1_2 = plane_line_intersect(surface_norm_vec, surface_point, I,  refracted_vec+I);
     I0_1 = plane_line_intersect(third_layer_norm_vec, third_layer_point, I0_0, refracted_vec0 + I0_0);
     loc_third_point = [I0_1(1), I0_1(2), -third_layer_depth];
+    
+    if nargin <= 6 
+        return;
+    end
     
     ii = 1;
     while ii<=length(varargin)
@@ -43,12 +47,13 @@ function [loc_third_point, refracted_vec0] = raytracing_liwen_downward(ini_point
                     [xx, yy] = ndgrid(-50:50, -50:50);
 
                     third_layer_zz = -third_layer_depth * ones(size(xx, 1), size(xx, 2));
-                    %moho_zz = (-moho_norm_vec(1)*xx - moho_norm_vec(2)*yy - d) / moho_norm_vec(3);
+                    moho_zz = (-moho_norm_vec(1)*xx - moho_norm_vec(2)*yy - d) / moho_norm_vec(3);
                     moho_flat_zz = v0_point(3) * ones(size(xx,1), size(xx, 2));
                     ini_zz = ini_point(3) * ones(size(xx, 1), size(yy, 2));
                     figure;
                     hold on;
                     surf(xx, yy, third_layer_zz);
+                    surf(xx, yy, moho_zz);
                     surf(xx, yy, moho_flat_zz);
                     surf(xx, yy, ini_zz);
 
