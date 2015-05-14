@@ -1,31 +1,31 @@
-function loc_new_grid = retracing_test(loc_sta, loc_grid, depth)
-     ret = taupTime('prem', depth, 'P', 'sta', loc_sta, 'evt', loc_grid);
-     ret.rayParam
-    
-     sin_takeoff_angle = ret(1).rayParam / (6400*2*3.1415926/360) * 6.8 / 57.3; % mysterious constant 57.3
-     asind(sin_takeoff_angle)
-     cos_takeoff_angle = sqrt(1 - sin_takeoff_angle^2);
-     [dk, dd, daze, dazs] = distaz(loc_sta(1), loc_sta(2), loc_grid(1), loc_grid(2));
-     ini_vec = [1*sin_takeoff_angle*sind(dazs), 1*sin_takeoff_angle*cosd(dazs), -1*cos_takeoff_angle];
-     %ret2 = taupPierce('prem', depth, 'P', 'sta', loc_sta, 'evt', loc_grid);
-     ini_point = [loc_grid(1), loc_grid(2), -20];
-     v0_point = [loc_grid(1), loc_grid(2), -40];
-     moho_norm_flat_vec = [0, 0, -1];
-     third_layer_depth = 80;
-     moho_norm_actual_vec = [1, 1, 6];
-     [loc_third_point, downward_vec] = raytracing_liwen_downward(ini_point, ini_vec, v0_point, ...
-         moho_norm_flat_vec, third_layer_depth);
-     [loc_new_grid, new_vec, I0_2] = raytracing_liwen_upward(loc_third_point, -downward_vec, v0_point, moho_norm_actual_vec, [loc_grid(1), loc_grid(2), -depth]);
-     ret.rayParam
-     downward_vec
-     loc_third_point
-     sin_takeoff_angle
-     cos_takeoff_angle
-     I0_2
-     ini_vec
-     daze
-     dazs
-     sin_takeoff_angle
-     
-     1*sin_takeoff_angle*cosd(dazs)
+%retracing test ...
+
+load /home/lwen/Documents/seis_research/raw_data/Hinet_nepal.v2.mat
+
+ep_lat = ret.lat0;
+ep_lon = ret.lon0;
+grid_dim = [40 40];
+bparea_span = [-5, 5; -5, 5];
+lon_step = (bparea_span(1,2)-bparea_span(1,1)) / grid_dim(2);
+lat_step = (bparea_span(2,2)-bparea_span(2,1)) / grid_dim(1);
+evt_depth = 20;
+loc_new_grid = zeros(grid_dim(1), grid_dim(2));
+count = 1;
+ii = 100;
+for i = 1:40
+    for j = 1:40
+        loc_grid = [-2+i*lat_step+ep_lat, -2+j*lon_step+ep_lon];
+        loc_sta = [ret.lat(ii), ret.lon(ii)];
+        loc_new_grid = retracing_liwen(loc_sta, loc_grid, evt_depth);
+        loc_new_grid_y(count) = loc_new_grid(1);
+        loc_new_grid_x(count) = loc_new_grid(2);
+        loc_old_grid_x(count) = -2+j*lon_step+ep_lon;
+        loc_old_grid_y(count) = -2+i*lat_step+ep_lat;
+        count = count+1;
+    end
 end
+
+figure;
+hold all;
+scatter(loc_new_grid_x, loc_new_grid_y);
+scatter(loc_old_grid_x, loc_old_grid_y);
