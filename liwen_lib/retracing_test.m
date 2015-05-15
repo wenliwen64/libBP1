@@ -14,6 +14,7 @@ count = 1;
 ii = 100;
 load ptimes.mat
 new_grid = zeros(40, 40);
+[dummy, timeshift0] = retracing_liwen(loc_sta, [ep_lat, ep_lon], evt_depth);
 for i = 1:40 % latitude
     for j = 1:40 % longitude
         loc_grid = [-2+i*lat_step+ep_lat, -2+j*lon_step+ep_lon];
@@ -24,7 +25,7 @@ for i = 1:40 % latitude
         loc_old_grid_x(count) = -2+j*lon_step+ep_lon;
         loc_old_grid_y(count) = -2+i*lat_step+ep_lat;
         sd = phtime(ret.fl, ep_lat, ep_lon, loc_grid(1), loc_grid(2), loc_sta(1), loc_sta(2), rr, tt);
-        timeshift(count) = timeshift_temp+sd;
+        timeshift(count) = timeshift_temp+sd-timeshift0;
         timeshift_temp% + sd;
         timeshift_old(count) = sd;
         
@@ -50,6 +51,8 @@ v2 = F2(gridx, gridy);
 figure;
 
 surf(gridx, gridy, v1);
+colorbar;
 figure;
 surf(gridx, gridy, v2);
+colorbar;
 
