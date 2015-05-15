@@ -48,7 +48,8 @@ F2 = scatteredInterpolant(loc_old_grid_x(:), loc_old_grid_y(:), timeshift_old(:)
 v1 = F1(gridx, gridy);
 v2 = F2(gridx, gridy);
 figure;
-hold all;
+
 surf(gridx, gridy, v1);
+figure;
 surf(gridx, gridy, v2);
 

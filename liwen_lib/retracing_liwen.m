@@ -15,7 +15,7 @@ function [loc_new_grid, timeshift] = retracing_liwen(loc_sta, loc_grid, evt_dept
      % set up the constant parameters;
      ini_vec = [1*sin_takeoff_angle*sind(dazs), 1*sin_takeoff_angle*cosd(dazs), -1*cos_takeoff_angle];
      ini_point = [loc_grid(2)*d2km, loc_grid(1)*d2km, -evt_depth];
-     v0_point = [lon0*d2km, lat0*d2km, -40];  % moho depth
+     v0_point = [(lon0+5)*d2km, (lat0)*d2km, -40];  % moho depth
      moho_norm_flat_vec = [0, 0, -1];
      third_layer_depth = 60;
      moho_norm_actual_vec = [1, 0, 5.1446]; % 11 degree tilting
