@@ -24,7 +24,7 @@ function [loc_new_grid, timeshift] = retracing_liwen(loc_sta, loc_grid, evt_dept
      
      [loc_third_point, downward_vec, timeshift_down] = raytracing_liwen_downward(ini_point, ini_vec, v0_point, ...
          moho_norm_flat_vec, third_layer_depth, nindex_down, 'direction', 'down');
-     loc_third_point
+     %loc_third_point
      [loc_new_grid, upward_vec, timeshift_up] = raytracing_liwen_downward(loc_third_point, -downward_vec, ...
          v0_point, moho_norm_actual_vec, evt_depth, nindex_up, 'direction', 'up');
      loc_new_grid = [loc_new_grid(2)*km2d, loc_new_grid(1)*km2d, loc_new_grid(3)];
