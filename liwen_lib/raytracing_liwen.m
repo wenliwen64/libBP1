@@ -38,12 +38,12 @@ function [loc_third_point, refracted_vec0, timeshift] = raytracing_liwen(ini_poi
     loc_third_point_flat = [I0_1_flat(1), I0_1_flat(2), -third_layer_depth];
 
     % Calculate the timeshift;
-    l1 = norm(ini_point - I0_0)
-    l2 = norm(I0_1 - I0_0)
-    l1_flat = norm(ini_point - I0_0_flat)
-    l2_flat = norm(I0_1_flat - I0_0_flat)
-    dl1 = l1 - l1_flat
-    dl2 = l2 - l2_flat
+    l1 = norm(ini_point - I0_0);
+    l2 = norm(I0_1 - I0_0);
+    l1_flat = norm(ini_point - I0_0_flat);
+    l2_flat = norm(I0_1_flat - I0_0_flat);
+    dl1 = l1 - l1_flat;
+    dl2 = l2 - l2_flat;
     
     if(strcmp(varargin{1}, 'direction') && strcmp(varargin{2}, 'down'))
         v1 = 6.2;

@@ -5,7 +5,7 @@ javaaddpath /home/liwen/Documents/seis_research/libBP1/taup/matTaup.jar
 ep_lat = ret.lat0;
 ep_lon = ret.lon0;
 grid_dim = [40 40];
-bparea_span = [-1.0, 1.0; -1.0, 1.0];
+bparea_span = [-1.4, 1.4; -1.4, 1.4];
 lon_step = (bparea_span(1,2)-bparea_span(1,1)) / grid_dim(2);
 lat_step = (bparea_span(2,2)-bparea_span(2,1)) / grid_dim(1);
 evt_depth = 20;
@@ -18,8 +18,9 @@ nsta = numel(ret.lat);
 new_grid_timeshift = zeros(nsta, 40, 40);
 old_grid_timeshift = zeros(nsta, 40, 40);
 for ii = 1:nsta
-[dummy, timeshift0] = retracing_liwen([ret.lat(ii), ret.lon(ii)], [ep_lat, ep_lon], evt_depth);
-count = 1;
+    ii
+    [dummy, timeshift0] = retracing_liwen([ret.lat(ii), ret.lon(ii)], [ep_lat, ep_lon], evt_depth);
+    count = 1;
     for i = 1:40 % latitude
         for j = 1:40 % longitude
             loc_grid = [-1.4+i*lat_step+ep_lat, -1.4+j*lon_step+ep_lon];
@@ -31,7 +32,7 @@ count = 1;
             loc_old_grid_y(count) = -2+i*lat_step+ep_lat;
             sd = phtime(ret.fl, ep_lat, ep_lon, loc_grid(1), loc_grid(2), loc_sta(1), loc_sta(2), rr, tt);
             timeshift(count) = timeshift_temp+sd-timeshift0;
-            timeshift_temp% + sd;
+            timeshift_temp;% + sd;
             timeshift_old(count) = sd;
 
             new_grid_x(i, j) = loc_new_grid_x(count);
