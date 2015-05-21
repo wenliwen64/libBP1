@@ -1,7 +1,7 @@
 % retracing test ...
 % You have to load a ret data first, and then run this script.
 % load /home/lwen/Documents/seis_research/raw_data/Hinet_nepal.v2.mat
-javaaddpath /home/liwen/Documents/seis_research/libBP1/taup/matTaup.jar
+javaaddpath /home/lwen/Documents/seis_research/libBP1/taup/matTaup.jar
 ep_lat = ret.lat0;
 ep_lon = ret.lon0;
 grid_dim = [40 40];
@@ -39,10 +39,26 @@ for ii = 1:nsta
             new_grid_y(i, j) = loc_new_grid_y(count);
             new_grid_timeshift(ii, i, j) = timeshift(count);
             old_grid_timeshift(ii, i, j) = timeshift_old(count);
+            
+
             count = count + 1;
         end
     end
+    [gridx, gridy] = ndgrid(ep_lon+bparea_span(1,1):lon_step:ep_lon+bparea_span(1,2), ep_lat+bparea_span(2,1):lat_step:ep_lat+bparea_span(2,2));
+    F1 = scatteredInterpolant(loc_new_grid_x(:), loc_new_grid_y(:), timeshift(:));
+    F2 = scatteredInterpolant(loc_old_grid_x(:), loc_old_grid_y(:), timeshift_old(:));
+
+    v1 = F1(gridx, gridy);
+    v2 = F2(gridx, gridy);
+    
+    ret1.timeshift(ii, :, :) = new_grid_timeshift(ii, :, :);
+    ret1.stalat(ii) = ret.lat(ii);
+    ret1.stalon(ii) = ret.lon(ii);
 end
+ret.lat_step = lat_step;
+ret.lon_step = lon_step;
+
+save('timeshift_newmoho.mat', 'ret1', '-v7.3');
 
 % figure;
 % hold all;
