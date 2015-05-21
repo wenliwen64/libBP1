@@ -1,4 +1,4 @@
-function [loc_third_point, refracted_vec0, timeshift] = raytracing_liwen_downward(ini_point, ini_vec, v0_point, moho_norm_vec, third_layer_depth, nindex, varargin)
+function [loc_third_point, refracted_vec0, timeshift] = raytracing_liwen(ini_point, ini_vec, v0_point, moho_norm_vec, third_layer_depth, nindex, varargin)
 % Calculate and plot the ray-tracing
 % Input: 
 %        ini_point: take off point of the initial ray;
@@ -11,7 +11,7 @@ function [loc_third_point, refracted_vec0, timeshift] = raytracing_liwen_downwar
 %        loc_third_point: the location of the end point of the ray;
 %        refracted_vec0: refracted ray's directional vector;
 % Example:
-%        loc_third_point, refracted_vec0] = raytracing_liwen_downward([0,0,0], [1,1,-6], [0,0,-20], [0,0,1], 80, 6.2/8.6, 'pic', 'yes');
+%        loc_third_point, refracted_vec0] = raytracing_liwen_downward([0,0,0], [1,1,-6], [0,0,-20], [0,0,1], 80, 6.2/8.6, 'direction', 'up', 'pic', 'yes');
     d2km = 6400*2*3.1415926/360;
     km2d = 1 / d2km;
     P1_point = ini_point + ini_vec;
