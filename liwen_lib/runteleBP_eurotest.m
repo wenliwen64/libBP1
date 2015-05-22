@@ -21,8 +21,8 @@
    end
    load('ptimes.mat');
 %%%%%%%%%%%%%%%%%
-   ret.latrange=[-1.4 1.4];
-   ret.lonrange=[-1.4 1.4];
+   ret.latrange=[-1 1];
+   ret.lonrange=[-1 1];
    tbuff=20;
 %ret.begin1=360*bh
 %ret.end1=360*eh;

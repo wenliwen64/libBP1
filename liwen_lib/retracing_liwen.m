@@ -18,7 +18,9 @@ function [loc_new_grid, timeshift] = retracing_liwen(loc_sta, loc_grid, evt_dept
      v0_point = [(lon0)*d2km, (lat0)*d2km, -50];  % moho depth
      moho_norm_flat_vec = [0, 0, -1];
      third_layer_depth = 80;
-     moho_norm_actual_vec = [1, 0, 5.1446]; % 11 degree 
+     
+     %moho_norm_actual_vec = [1, 0, 5.1446]; % 11 degree 
+     moho_norm_actual_vec = [0.1729,   0.0806,    0.9816];
      nindex_down = 6.2/8.6;
      nindex_up = 8.6/6.2;
      

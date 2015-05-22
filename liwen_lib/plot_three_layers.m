@@ -1,8 +1,8 @@
 %function plot_three_layers(grid_lat_range, grid_lon_range, v0_point, moho_norm_vec, third_layer_depth)
-    grid_lat_range = [-3, 3];
-    grid_lon_range = [-3, 3];
+    grid_lat_range = [-1, 1];
+    grid_lon_range = [-1, 1];
     v0_point = [0, 0, -50];
-    moho_norm_vec = [1, 0, 5.1446];
+    moho_norm_vec = [0.1729,   0.0806,    0.9816];
     d = -dot(moho_norm_vec, v0_point);
     third_layer_depth = 80;
     ini_point = [0,0,-20];

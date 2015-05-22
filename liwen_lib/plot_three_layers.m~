@@ -1,8 +1,8 @@
 %function plot_three_layers(grid_lat_range, grid_lon_range, v0_point, moho_norm_vec, third_layer_depth)
-    grid_lat_range = [-5, 5];
-    grid_lon_range = [-5, 5];
-    v0_point = [0, 0, -40];
-    moho_norm_vec = [1, 0, 5.1446];
+    grid_lat_range = [-1.5, 1.5];
+    grid_lon_range = [-1., 1.5];
+    v0_point = [0, 0, -50];
+    moho_norm_vec = [0.1729,   0.0806,    0.9816];
     d = -dot(moho_norm_vec, v0_point);
     third_layer_depth = 80;
     ini_point = [0,0,-20];
@@ -25,8 +25,8 @@
     hold on;
     surf(xx*km2d, yy*km2d, third_layer_zz);
     surf(xx*km2d, yy*km2d, moho_zz);
-    surf(xx, yy*km2d, moho_flat_zz);
-    surf(xx, yy, ini_zz);
+    surf(xx*km2d, yy*km2d, moho_flat_zz);
+    surf(xx*km2d, yy*km2d, ini_zz);
 
 %     ini_ray_x = linspace(ini_point(1), I0_0(1), 50);
 %     ini_ray_y = linspace(ini_point(2), I0_0(2), 50);
