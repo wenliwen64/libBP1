@@ -53,7 +53,9 @@ for ii = 1:nsta
     v2 = F2(gridx, gridy);
     
     
-    ret1.timeshift(:,:,ii) = v1(:,:) - v1(21,21); %new_grid_timeshift(ii, :, :);
+    ret1.timeshift(:,:,ii) = v1(:,:) - v1(21,21);%new_grid_timeshift(ii, :, :);
+    ret1.lat(:, :, ii) = gridy;
+    ret1.lon(:, :, ii) = gridx;
     ret1.stalat(ii) = ret.lat(ii);
     ret1.stalon(ii) = ret.lon(ii);
 end
