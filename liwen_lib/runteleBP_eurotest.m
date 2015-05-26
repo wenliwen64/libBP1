@@ -8,6 +8,9 @@
 %=======ret1 and ret stand for? Go to read_nchile_input_liwen=================
    %ret1=ret;
    %disp(filename);
+   %load eu_testshift1.mat
+   clear all;
+   close all;
    load eu_testshift1.mat
    %load([dataDIR0 filename]);
 %===matchshiftAll = ?===========================
@@ -21,8 +24,8 @@
    end
    load('ptimes.mat');
 %%%%%%%%%%%%%%%%%
-   ret.latrange=[-1 1];
-   ret.lonrange=[-1 1];
+   ret.latrange=[-1.0, 1.0];
+   ret.lonrange=[-1.0, 1.0];
    tbuff=20;
 %ret.begin1=360*bh
 %ret.end1=360*eh;
@@ -52,9 +55,9 @@
 %lat0 = -19.642;
    sr = ret.sr;% sr = sample rate
 %parr=ret.parr;% time shift at beginning here is 20s. 
-    parr = 0;
+   parr = 0;
    begin=ret.begin;
-    over=ret.end;% time end of the time series(
+   over=ret.end;% time end of the time series(
 %step=ret.step;% step is the time increment step, here is 1s.
 step=1;
 ps=40%ret.ps;% backprojection region grid row number 
@@ -82,7 +85,8 @@ uy=linspace(uyRange(1)+lon0,uyRange(2)+lon0,qs);
 %I = findstr('.', filename);
 %logname = filename(1:I(end)-1);
 %fileID=fopen(['./logfile_', logname], 'w');
-fileID=fopen('lofile_eurotest.dat', 'w');
+fileID = fopen('logfile_eutest.dat', 'w');
+%fileID=fopen('logfile_eurotest.dat', 'w');
 %logname
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    [BB,AA]=butter(4,[fl fh]/(sr/2));% butterworth filter data, the second parameter is the cutoff frequencies
@@ -118,18 +122,15 @@ fileID=fopen('lofile_eurotest.dat', 'w');
 	y0=zeros(n,2*win*sr);
 	
 	for p=1:ps
-		
 		for q=1:qs
 			sd=tlib(:,p,q)';
 			
-			dataInd = bsxfun(@plus, dataIndTemp, sd*sr);% timeshift data ======
+			dataInd = bsxfun(@plus, dataIndTemp, sd*sr);  % timeshift data ======
 			 %display(dataInd);
 			dataInd = floor(dataInd + offset);
             %display('dataInd = ');
-            
           
 			y = rawData(dataInd)';% Each row is time series corresponding to one station.
-         
 			% 					                    for k=1:n
 			% 					                           y(k,:)=x0(k,floor((tl+sd(k))*sr):floor((tl+win+sd(k))*sr-1));
 			% 					%                         y0(k,:)=specshift(x0(k,(tl-1/2*win)*sr:(tl+3/2*win)*sr-1),sd(k)*sr);
@@ -137,7 +138,7 @@ fileID=fopen('lofile_eurotest.dat', 'w');
 			% 					                    end
 			Pm(p,q)=sum(sum(y(:,:),1).^2);% stacking    
 			mati=corrcoef(y'); % mati is a 192 by 192 correlation coefficient matrix
-			Pm1(p,q)=mean(mati(:));%cross-correlation======?==============This is easy: if mati=[1,2;3,4], then mati(:)=[1,2,3,4]'
+			Pm1(p,q)=mean(mati(:)); % cross-correlation======?==============This is easy: if mati=[1,2;3,4], then mati(:)=[1,2,3,4]'
 		end
 	end
 	tmp1=peakfit2d(real(Pm));

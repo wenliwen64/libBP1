@@ -1,4 +1,4 @@
-function [loc_third_point, refracted_vec0, timeshift] = raytracing_liwen(ini_point, ini_vec, v0_point, moho_norm_vec, third_layer_depth, nindex, varargin)
+function [loc_third_point, refracted_vec0, timeshift] = raytracing_liwen(ini_point, ini_vec, v0_point, moho_norm_vec, third_layer_depth, nindex, epicenter, bprange, varargin)
 % Calculate and plot the ray-tracing
 % Input: 
 %        ini_point: take off point of the initial ray;
@@ -11,10 +11,13 @@ function [loc_third_point, refracted_vec0, timeshift] = raytracing_liwen(ini_poi
 %        loc_third_point: the location of the end point of the ray;
 %        refracted_vec0: refracted ray's directional vector;
 % Example:
-%        loc_third_point, refracted_vec0] = raytracing_liwen_downward([0,0,0], [1,1,-6], [0,0,-20], [0,0,1], 80, 6.2/8.6, 'direction', 'up', 'pic', 'yes');
+%        loc_third_point, refracted_vec0] = raytracing_liwen([0,0,0], [1,1,-6], [0,0,-20], [0,0,1], 80, 6.2/8.6, [0,0], [-1,1;-1,1],'direction', 'up', 'pic', 'yes');
+    
     d2km = 6400*2*3.1415926/360;
     km2d = 1 / d2km;
     P1_point = ini_point + ini_vec;
+    bprange = bprange*d2km;
+    epicenter = epicenter*d2km;
     
     n_index = nindex; % 6.2 / 8.6;
     moho_norm_vec_flat = [0, 0, 1];
@@ -71,7 +74,9 @@ function [loc_third_point, refracted_vec0, timeshift] = raytracing_liwen(ini_poi
                 
                 if varargin{ii+1} == 'yes'
                     d = -dot(moho_norm_vec, v0_point);
-                    [xx, yy] = ndgrid(-50:50, -50:50);
+                    lon_step = (bprange(2,2) - bprange(2,1)) / 40;
+                    lat_step = (bprange(1,2) - bprange(1,1)) / 40;
+                    [xx, yy] = ndgrid(epicenter(2)+bprange(2,1):lon_step:epicenter(2)+bprange(2,2), epicenter(1)+bprange(1,1):lat_step:epicenter+bprange(1,2)); % ndgrid(-50:50, -50:50);
 
                     third_layer_zz = -third_layer_depth * ones(size(xx, 1), size(xx, 2));
                     moho_zz = (-moho_norm_vec(1)*xx - moho_norm_vec(2)*yy - d) / moho_norm_vec(3);

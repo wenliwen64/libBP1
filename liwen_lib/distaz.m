@@ -7,10 +7,10 @@ function [dk,dd,daze,dazs] = distaz(sta,sto,epa,epo)
 % output:
 %     dk = distance in kms
 %     dd = distance in degree
-%     daze = back azimuthal angle (from station to epicenter)
-%     dazs = azimuthal angle (from station to epicenter)
+%     daze = back azimuthal angle (from north to epicenter@station)
+%     dazs = azimuthal angle (from north to station@epicenter)
 % Example:
-% 
+%     [dk,dd,daze,dazs] = distaz(0, 0, 30, 0)
         rad=pi/180.0d0;
 
         sa  = atan(.993270*tan(sta*rad));
