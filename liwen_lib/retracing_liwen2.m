@@ -1,4 +1,4 @@
-function [loc_new_grid, timeshift] = retracing_liwen(loc_sta, loc_grid, evt_depth, epicenter, bprange) % (lat, lon) tuple
+function [loc_new_grid_flat, loc_new_grid, traveltime_flat, traveltime_actual] = retracing_liwen2(loc_sta, loc_grid, evt_depth, epicenter, bprange) % (lat, lon) tuple
 % This function is used to recompute the travel time using different moho
 % geomety setup.
 % Input: 
@@ -17,6 +17,7 @@ function [loc_new_grid, timeshift] = retracing_liwen(loc_sta, loc_grid, evt_dept
      lon0 = 84.7079;
      d2km = 6371*2*3.1415926/360;
      km2d = 1/d2km;
+     third_layer_depth = 80;
      ret = taupTime('prem', third_layer_depth, 'P', 'sta', loc_sta, 'evt', loc_grid);
     
      % calculate the initial take off angle
@@ -25,22 +26,27 @@ function [loc_new_grid, timeshift] = retracing_liwen(loc_sta, loc_grid, evt_dept
      [dk, dd, daze, dazs] = distaz(loc_sta(1), loc_sta(2), loc_grid(1), loc_grid(2));
      
      % set up the initial parameters;!!========IMPORTANT=========!!
-     ini_vec = [1*sin_takeoff_angle*sind(dazs), 1*sin_takeoff_angle*cosd(dazs), -1*cos_takeoff_angle]; % downward
-     ini_point = [loc_grid(2)*d2km, loc_grid(1)*d2km, -evt_depth];
+     ini_vec = [1*sin_takeoff_angle*sind(dazs), 1*sin_takeoff_angle*cosd(dazs), -1*cos_takeoff_angle];% upward
+     ini_vec = ini_vec / norm(ini_vec);
+     ini_point = [loc_grid(2)*d2km, loc_grid(1)*d2km, -third_layer_depth];% use third_layer as the initial surface
      v0_point = [(lon0)*d2km, (lat0)*d2km, -50];  % point on the moho surface;
      moho_norm_flat_vec = [0, 0, 1];
      third_layer_depth = 80;
      moho_norm_actual_vec = [0.1729, 0.0806, 0.9816]; % based on info at http://earthquake.usgs.gov/earthquakes/eventpage/us20002926#scientific_tensor:us_us_20002926_mwc
      nindex_down = 6.8/8.2; % original_velocity / next_medium_velocity
-     nindex_up = 8.6/6.2;
+     nindex_up = 8.2/6.8;
      
-     [loc_third_point, downward_vec, timeshift_down] = raytracing_liwen2(ini_point, ini_vec, v0_point, ...
-         moho_norm_flat_vec, third_layer_depth, nindex_down, epicenter, bprange, 'direction', 'down');
+     [loc_new_grid_xy_flat, downward_vec, traveltime_flat] = raytracing_liwen2(ini_point, -ini_vec, v0_point, ...
+         -moho_norm_flat_vec, evt_depth, nindex_down, epicenter, bprange, 'direction', 'up');
      
-     [loc_new_grid_xy, upward_vec, timeshift_up] = raytracing_liwen(loc_third_point, -downward_vec, ...
-         v0_point, moho_norm_actual_vec, evt_depth, nindex_up, epicenter, bprange,  'direction', 'up');
+     [loc_new_grid_xy, upward_vec, traveltime_actual] = raytracing_liwen(ini_point, -ini_vec, ...
+         v0_point, -moho_norm_actual_vec, evt_depth, nindex_up, epicenter, bprange,  'direction', 'up');
      
-     loc_new_grid = [loc_new_grid_xy(2)*km2d, loc_new_grid_xy(1)*km2d, loc_new_grid_xy(3)];
-     timeshift = timeshift_down + timeshift_up;
+     loc_new_grid_flat = [loc_new_grid_xy_flat(2)*km2d, loc_new_grid_xy_flat(1)*km2d, evt_depth];% lat, lon
+     loc_new_grid = [loc_new_grid_xy(2)*km2d, loc_new_grid_xy(1)*km2d, evt_depth];
+     
+     traveltime_flat = traveltime_flat + ret.time;
+     traveltime_actual = traveltime_actual + ret.time;
+     
 
 end

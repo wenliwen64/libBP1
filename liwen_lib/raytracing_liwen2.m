@@ -1,4 +1,4 @@
-function [loc_third_point, refracted_vec0, timeshift] = raytracing_liwen2(ini_point, ini_vec, v0_point, moho_norm_vec, third_layer_depth, nindex, epicenter, bprange, varargin)
+function [loc_third_point, refracted_vec0, traveltime] = raytracing_liwen2_upward(ini_point, ini_vec, v0_point, moho_norm_vec, third_layer_depth, dummy, epicenter, bprange, varargin)
 % Calculate and plot the ray-tracing
 % Input: 
 %        ini_point: take off point of the initial ray;
@@ -13,23 +13,23 @@ function [loc_third_point, refracted_vec0, timeshift] = raytracing_liwen2(ini_po
 % Example:
 %        loc_third_point, refracted_vec0] = raytracing_liwen([0,0,0], [1,1,-6], [0,0,-20], [0,0,1], 80, 6.2/8.6, [0,0], [-1,1;-1,1],'direction', 'up', 'pic', 'yes');
     
-    d2km = 6400*2*3.1415926/360;
+    d2km = 6371*2*3.1415926/360;
     km2d = 1 / d2km;
     P1_point = ini_point + ini_vec;
     bprange = bprange*d2km;
     epicenter = epicenter*d2km;
     
-    n_index = nindex; % 6.2 / 8.6;
-    v_up = 6.2;
-    v_bot = 8.6;
-    moho_norm_vec_flat = [0, 0, 1];
+    %n_index = nindex; % 6.2 / 8.6;
+    v_up = 6.8;
+    v_bot = 8.2;
+    moho_norm_vec_flat = [0, 0, -1];
     % Calculate the intersection point
     [I0_0, check0] = plane_line_intersect(moho_norm_vec, v0_point, ini_point, P1_point);
     [I0_0_flat, check_flat] = plane_line_intersect(moho_norm_vec_flat, v0_point, ini_point, P1_point);
     % Calculate the refracted ray's directional vector
     
-    refracted_vec0 = snell_vector(ini_vec, moho_norm_vec, v_bot/v_up);  % this moho_norm_vec should be towarding down
-    refracted_vec_flat = snell_vector(ini_vec, moho_norm_vec_flat, v_bot/v_up);
+    refracted_vec0 = snell_vector(ini_vec, -moho_norm_vec, v_up/v_bot);  % this moho_norm_vec should be towarding down
+    refracted_vec0_flat = snell_vector(ini_vec, moho_norm_vec_flat, v_up/v_bot);
 
     third_layer_point = [0, 0, -third_layer_depth];
     third_layer_point_flat = [0, 0, -third_layer_depth];
@@ -37,7 +37,7 @@ function [loc_third_point, refracted_vec0, timeshift] = raytracing_liwen2(ini_po
     third_layer_norm_vec_flat = [0, 0, 1];
     
     %I1_2 = plane_line_intersect(surface_norm_vec, surface_point, I,  refracted_vec+I);
-    I0_1 = plane_line_intersect(third_layer_norm_vec, third_layer_point, I0_0, refracted_vec0 + I0_0);
+    I0_1 = plane_line_intersect(third_layer_norm_vec, third_layer_point_flat, I0_0, refracted_vec0 + I0_0);
     I0_1_flat = plane_line_intersect(third_layer_norm_vec, third_layer_point_flat, I0_0_flat, ...
         refracted_vec0_flat + I0_0_flat);
     loc_third_point = [I0_1(1), I0_1(2), -third_layer_depth];
@@ -52,16 +52,16 @@ function [loc_third_point, refracted_vec0, timeshift] = raytracing_liwen2(ini_po
     dl2 = l2 - l2_flat;
     
     if(strcmp(varargin{1}, 'direction') && strcmp(varargin{2}, 'down'))
-        v1 = 6.2;
-        v2 = 8.6;
+        v1 = 6.8;
+        v2 = 8.2;
     elseif(strcmp(varargin{1}, 'direction') && strcmp(varargin{2}, 'up'))
-        v1 = 8.6;
-        v2 = 6.2;
+        v1 = 8.2;
+        v2 = 6.8;
     else 
         error('bad direction!');
     end
     
-    timeshift = dl1 / v1 + dl2 /v2;
+    traveltime = l1 / v1 + l2 /v2;
     
     if nargin <= 6 
         return;
