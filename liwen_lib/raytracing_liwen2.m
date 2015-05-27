@@ -1,4 +1,4 @@
-function [loc_third_point, refracted_vec0, timeshift] = raytracing_liwen(ini_point, ini_vec, v0_point, moho_norm_vec, third_layer_depth, nindex, epicenter, bprange, varargin)
+function [loc_third_point, refracted_vec0, timeshift] = raytracing_liwen2(ini_point, ini_vec, v0_point, moho_norm_vec, third_layer_depth, nindex, epicenter, bprange, varargin)
 % Calculate and plot the ray-tracing
 % Input: 
 %        ini_point: take off point of the initial ray;
@@ -27,10 +27,9 @@ function [loc_third_point, refracted_vec0, timeshift] = raytracing_liwen(ini_poi
     [I0_0, check0] = plane_line_intersect(moho_norm_vec, v0_point, ini_point, P1_point);
     [I0_0_flat, check_flat] = plane_line_intersect(moho_norm_vec_flat, v0_point, ini_point, P1_point);
     % Calculate the refracted ray's directional vector
-    refracted_vec0 = refracted(ini_vec, moho_norm_vec, n_index);
-    %refracted_vec0 = refracted(ini_vec, moho_norm_vec, v_ori, v_next);
-    %refracted_vec_flat = snell_vector(ini_vec, moho_norm_vec_flat, v_ori, v_next);
-    refracted_vec0_flat = refracted(ini_vec, moho_norm_vec_flat, n_index);
+    
+    refracted_vec0 = snell_vector(ini_vec, moho_norm_vec, v_bot/v_up);  % this moho_norm_vec should be towarding down
+    refracted_vec_flat = snell_vector(ini_vec, moho_norm_vec_flat, v_bot/v_up);
 
     third_layer_point = [0, 0, -third_layer_depth];
     third_layer_point_flat = [0, 0, -third_layer_depth];
