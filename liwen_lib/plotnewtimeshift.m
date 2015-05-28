@@ -1,7 +1,9 @@
 % plot the new timeshift
-close all;
+%close all;
 figure;
 hold all;
+ep_lat = 28.1473; 
+ep_lon = 84.7079;
 bpgrid_x_vec = linspace(ep_lon + bparea_span(1, 1), ep_lon + bparea_span(1,2), xslices);
 bpgrid_y_vec = linspace(ep_lat + bparea_span(2, 1), ep_lat + bparea_span(2, 2), yslices);
 count_temp = 1;
@@ -17,12 +19,13 @@ scatter(loc_flat_grid_x, loc_flat_grid_y, 30);
 
 [gridx, gridy] = ndgrid(ep_lon+bparea_span(1,1):lon_step:ep_lon+bparea_span(1,2), ep_lat+bparea_span(2,1):lat_step:ep_lat+bparea_span(2,2));
 F1 = scatteredInterpolant(loc_new_grid_x(:), loc_new_grid_y(:), timeshift(:));
-F2 = scatteredInterpolant(loc_flat_grid_x(:), loc_flat_grid_y(:), timeshift_old(:));
+F2 = scatteredInterpolant(loc_flat_grid_x(:), loc_flat_grid_y(:), timeshift_flat(:));
 F3 = scatteredInterpolant(loc_old_grid_x(:), loc_old_grid_y(:), a(:));
 
 v1 = F1(gridx, gridy);
 v2 = F2(gridx, gridy);
 v3 = F3(gridx, gridy);
+taup_eptime = F3(ep_lon, ep_lat);
 figure;
 
 %surf(gridx, gridy, v1-ep_newtimeshift);
@@ -40,3 +43,9 @@ surf(gridx, gridy, v1-v2-ep_newtimeshift+ep_oldtimeshift);
 colorbar;
 figure;
 surf(gridx, gridy, v3);
+figure;
+surf(gridx, gridy, v3-v2-taup_eptime+ep_oldtimeshift);
+colorbar;
+title('taup-flat');
+figure;
+surf(gridx, gridy, v3-taup_eptime - v1 +ep_newtimeshift);

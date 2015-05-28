@@ -11,7 +11,8 @@
    %load eu_testshift1.mat
    clear all;
    close all;
-   load eu_testshift1.mat
+   %load eu_testshift1.mat
+   load eu_testshift1_2.mat
    %load([dataDIR0 filename]);
 %===matchshiftAll = ?===========================
    %ret1.lon=round(ret1.lon*1e4)/1e4;
