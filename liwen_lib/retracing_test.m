@@ -32,7 +32,7 @@ new_grid_x = zeros(40, 40);
 %ret1.timeshift = zeros(41, 41, nsta);
 bpgrid_x_vec = linspace(ep_lon + bparea_span(1, 1), ep_lon + bparea_span(1,2), xslices);
 bpgrid_y_vec = linspace(ep_lat + bparea_span(2, 1), ep_lat + bparea_span(2, 2), yslices);
-for ii = 1: nsta
+for ii = 1:1% nsta
     ii
     [dummy, timeshift0] = retracing_liwen([ret.lat(ii), ret.lon(ii)], [ep_lat, ep_lon], evt_depth, epicenter, bparea_span);
     count = 1;

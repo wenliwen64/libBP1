@@ -20,3 +20,6 @@ figure;
 surf(gridx, gridy, v2);
 title('old\_timeshift');
 colorbar;
+figure;
+surf(gridx, gridy, v1-v2);
+colorbar;
