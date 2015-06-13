@@ -1,4 +1,4 @@
-function [refracted_vec, check] = refracted(ini_vec, normal_vec, n_index)
+function refracted_vec = refracted(ini_vec, normal_vec, n_index)
 
     cos_i = dot(ini_vec, normal_vec) / norm(ini_vec) / norm(normal_vec);
 

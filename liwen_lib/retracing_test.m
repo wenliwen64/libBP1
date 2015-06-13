@@ -20,8 +20,8 @@ ii = 1;
 load ptimes.mat
 new_grid = zeros(xslices, yslices);
 nsta = numel(ret.lat);
-new_grid_timeshift = zeros(nsta, xslices, yslices);
-old_grid_timeshift = zeros(nsta, xslices, yslices);
+new_grid_timeshift = zeros(xslices, yslices, nsta);
+old_grid_timeshift = zeros(xslices, yslices, nsta);
 loc_new_grid_x = zeros(40*40, 1);
 loc_new_grid_y = zeros(40*40, 1);
 loc_old_grid_x = zeros(40*40, 1);
@@ -53,8 +53,8 @@ for ii = 1:1% nsta
 
             new_grid_x(i, j) = loc_new_grid(2);
             new_grid_y(i, j) = loc_new_grid(1);
-            new_grid_timeshift(ii, i, j) = timeshift(count);
-            old_grid_timeshift(ii, i, j) = timeshift_old(count);
+            new_grid_timeshift(i, j, ii) = timeshift(count);
+            old_grid_timeshift(i, j, ii) = timeshift_old(count);
             count = count + 1;
         end
     end
