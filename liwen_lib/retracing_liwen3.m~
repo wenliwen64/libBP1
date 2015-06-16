@@ -8,8 +8,8 @@ function output = retracing_liwen3(input) % (lat, lon) tuple
 %     input.start_depth: starting point's depth in kilometer;
 %     input.third_layer_depth_retracing: the final layer in the wave
 %         propagation?
-%     input.epicenter_r: epicenter, 2d, [x, y] in km;
-%     input.bprange_r: bp area in km, 2d;
+%     input.epicenter_r: epicenter
+%     evt_depth = event depth
 % Output: 
 %     loc_new_grid = location of new grid point after re-raytracing down-up
 %                    calculation
@@ -23,15 +23,13 @@ function output = retracing_liwen3(input) % (lat, lon) tuple
      d2km = 6371*2*3.1415926/360;
      km2d = 1/d2km;
      
-     loc_sta = input.loc_sta;
-     loc_grid = input.loc_grid;
+     loc_sta = input.loc_sta
+     loc_grid = input.loc_grid
      evt_depth = input.evt_depth;
      start_depth = input.start_depth;
      third_layer_depth_retracing = input.third_layer_depth_retracing;
      epicenter_r = input.epicenter_r;
      bprange_r = input.bprange_r;
-     moho_norm_flat_vec = input.moho_norm_flat_vec;
-     moho_norm_actual_vec = input.moho_norm_actual_vec;%[0.1729, 0.0806, 0.9816];
      
      ret = taupTime('prem', start_depth, 'P', 'sta', loc_sta, 'evt', loc_grid);
     
@@ -44,10 +42,10 @@ function output = retracing_liwen3(input) % (lat, lon) tuple
      % set up the initial parameters;!!========IMPORTANT=========!!
      ini_vec = [1*sin_takeoff_angle*sind(dazs), 1*sin_takeoff_angle*cosd(dazs), -1*cos_takeoff_angle];% downward
      ini_vec = ini_vec / norm(ini_vec);
-     ini_point_r = [loc_grid(2)*d2km, loc_grid(1)*d2km, -start_depth];  % use third_layer as the initial surface
+     ini_point_r = [loc_grid(2)*d2km, loc_grid(1)*d2km, -start_depth];% use third_layer as the initial surface
      v0_point_r = [(lon0)*d2km, (lat0)*d2km, -50];  % point on the moho surface;
-     %moho_norm_flat_vec = [0, 0, 1];
-     %moho_norm_actual_vec = [0.1729, 0.0806, 0.9816];  % based on info at http://earthquake.usgs.gov/earthquakes/eventpage/us20002926#scientific_tensor:us_us_20002926_mw
+     moho_norm_flat_vec = [0, 0, 1];
+     moho_norm_actual_vec = [0.1729, 0.0806, 0.9816]; % based on info at http://earthquake.usgs.gov/earthquakes/eventpage/us20002926#scientific_tensor:us_us_20002926_mw
      
      input_actual.ini_point_r = ini_point_r;
      input_actual.ini_vec = -ini_vec; % upward directing vector
@@ -56,7 +54,7 @@ function output = retracing_liwen3(input) % (lat, lon) tuple
      input_actual.third_layer_depth_retracing = third_layer_depth_retracing;
      input_actual.epicenter_r = epicenter_r;
      input_actual.bprange_r = bprange_r;
-     input_actual.plot = 0;
+     input_actual.plot = 1;
      input_actual.direction = 1;
      
      output_actual = raytracing_liwen3(input_actual);
@@ -73,8 +71,8 @@ function output = retracing_liwen3(input) % (lat, lon) tuple
      
      output_flat = raytracing_liwen3(input_flat);
      
-     output.loc_new_grid_flat_deg = [output_flat.third_point_r(2)*km2d, output_flat.third_point_r(1)*km2d, evt_depth];% lat, lon
-     output.loc_new_grid_deg = [output_actual.third_point_r(2)*km2d, output_actual.third_point_r(1)*km2d, evt_depth];
+     output.loc_new_grid_flat = [output_flat.third_point_r(2)*km2d, output_flat.third_point_r(1)*km2d, evt_depth];% lat, lon
+     output.loc_new_grid = [output_actual.third_point_r(2)*km2d, output_actual.third_point_r(1)*km2d, evt_depth];
      
      output.traveltime_flat = output_flat.traveltime  + ret.time;
      output.traveltime_actual = output_actual.traveltime + ret.time;

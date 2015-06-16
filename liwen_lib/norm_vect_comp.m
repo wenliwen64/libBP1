@@ -1,7 +1,8 @@
 % this script used to find the normal vector of a cern plane from strike
 % and dip
+function normal_vec = norm_vect_comp(dip_deg)
 strike_angle = 295;
-dip_angle = 11;
+dip_angle = dip_deg; %20;%11;
 x0 = 1*cosd(strike_angle);
 y0 = 1*sind(strike_angle);
 z0 = 0;
@@ -13,3 +14,4 @@ z1 = -1*sind(dip_angle);
 a = [x0, y0, z0];
 b = [x1, y1, z1];
 normal_vec = cross(a,b);
+end

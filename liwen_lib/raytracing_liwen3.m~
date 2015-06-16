@@ -26,11 +26,10 @@ function output = raytracing_liwen3(input)
 %        input.moho_norm_vec = [0.1729, 0.0806, 0.9816];
 %        input.third_layer_depth_retracing = 20;
 %        input.epicenter_r = [0,0];
-%        input.bprange_r = [-1,1;-1,1];
+%        input.bprange_r = [-1,1];
 %        input.direction = 1;
 %        input.plot = 0;
-%        output = raytracing_liwen(input);
-%        //output = raytracing_liwen([0,0,0], [1,1,-6], [0,0,-20], [0,0,1], 80, 6.2/8.6, [0,0], [-1,1;-1,1],'direction', 'up', 'pic', 'yes');
+%        loc_third_point, refracted_vec0] = raytracing_liwen([0,0,0], [1,1,-6], [0,0,-20], [0,0,1], 80, 6.2/8.6, [0,0], [-1,1;-1,1],'direction', 'up', 'pic', 'yes');
     ini_point_r = input.ini_point_r;
     ini_vec = input.ini_vec;
     v0_point_r = input.v0_point_r;
@@ -111,7 +110,7 @@ function output = raytracing_liwen3(input)
         hold on;
         surf(xx, yy, third_layer_zz);
         surf(xx, yy, moho_zz);
-        %surf(xx, yy, moho_flat_zz);
+        surf(xx, yy, moho_flat_zz);
         surf(xx, yy, ini_zz);
 
         ini_ray_x = linspace(ini_point_r(1), I0_0(1), 50);
