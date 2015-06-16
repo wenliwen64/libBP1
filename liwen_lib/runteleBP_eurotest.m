@@ -12,7 +12,7 @@
    clear all;
    close all;
    %load eu_testshift1.mat
-   load eu_testshift1_2.mat
+   load eu_testshift1_2_x15y25_dip20.mat
    %load([dataDIR0 filename]);
 %===matchshiftAll = ?===========================
    %ret1.lon=round(ret1.lon*1e4)/1e4;
@@ -86,7 +86,7 @@ uy=linspace(uyRange(1)+lon0,uyRange(2)+lon0,qs);
 %I = findstr('.', filename);
 %logname = filename(1:I(end)-1);
 %fileID=fopen(['./logfile_', logname], 'w');
-fileID = fopen('logfile_eutest.dat', 'w');
+fileID = fopen('logfile_eutest_x15y25_dip20.dat', 'w');
 %fileID=fopen('logfile_eurotest.dat', 'w');
 %logname
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

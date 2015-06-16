@@ -49,9 +49,11 @@ for ii = 1:nsta
 %     ep_retracing_input.start_depth = 80;
 %     ep_retracing_input.epicenter_r = [ep_lon, ep_lat]*d2km;
 %     ep_retracing_input.bprange_r = bparea_span*d2km;
+%     ep_retracing_input.moho_norm_flat_vec = moho_norm_flat_vec;
+%     ep_retracing_input.moho_norm_actual_vec = moho_norm_actual_vec;
 %     
 %     ep_retracing_output = retracing_liwen3(ep_retracing_input);
-    
+%     
     count = 1;
      for i = 1:yslices % latitude
          for j = 1:xslices % longitud
@@ -99,7 +101,7 @@ for ii = 1:nsta
     ep_oldtimeshift = F2(ep_lon, ep_lat);
     
     ret1.timeshift(:, :, ii) = v1(:, :); %- ep_newtimeshift; % v1(xslices/2+1, yslices/2+1); % new_grid_timeshift(ii, :, :);
-    ret1.timeshift_old(:, :, ii) = v2(:, :); %v2(xslices/2+1, yslices/2+1);
+    ret1.timeshift_flat(:, :, ii) = v2(:, :); %v2(xslices/2+1, yslices/2+1);
     ret1.lat(:, :, ii) = gridy_deg;
     ret1.lon(:, :, ii) = gridx_deg;
     ret1.stalat(ii) = ret.lat(ii);
@@ -108,4 +110,4 @@ for ii = 1:nsta
     ret1.ep_flattraveltime(ii) = ep_oldtimeshift;
 end
 
-save('timeshift_newmoho_eu2_dip15.mat', 'ret1', '-v7.3');
+save('timeshift_newmoho_eu2_dip20.mat', 'ret1', '-v7.3');
