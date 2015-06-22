@@ -7,7 +7,7 @@ load nsac4_eu.mat % Europe
 
 d2km = 6371*2*3.1415926/360;
 km2d = 1/d2km;
-moho_norm_actual_vec = norm_vect_comp(20); %[0.3100    0.1445    0.9397];%[0.1729, 0.0806, 0.9816];
+moho_norm_actual_vec = norm_vect_comp(15); %[0.3100    0.1445    0.9397];%[0.1729, 0.0806, 0.9816];
 moho_norm_flat_vec = [0, 0, 1];
 ep_lat = ret.lat0;
 ep_lon = ret.lon0;
@@ -110,4 +110,4 @@ for ii = 1:nsta
     ret1.ep_flattraveltime(ii) = ep_oldtimeshift;
 end
 
-save('timeshift_newmoho_eu2_dip20.mat', 'ret1', '-v7.3');
+save('timeshift_newmoho_eu2_dip15.mat', 'ret1', '-v7.3');

@@ -2,7 +2,7 @@
 % according to a virtual epicenter. 
 clear all;
 close all;
-load timeshift_newmoho_eu2_dip20.mat;
+load timeshift_newmoho_eu2_dip15.mat;
 load ./nsac4_eu.mat;
 
 lat0 = ret.lat0;
@@ -10,8 +10,8 @@ lon0 = ret.lon0;
 %bparea_span = [-1., 1.; -1., 1.];
 xslices = 40;
 yslices = 40;
-q0 = 15; % x
-p0 = 25; % y
+q0 = 20; % x
+p0 = 20; % y
 %bpgrid_x_vec = linspace(lon0 + bparea_span(1, 1), lon0 + bparea_span(1,2), xslices);
 %bpgrid_y_vec = linspace(lat0 + bparea_span(2, 1), lat0 + bparea_span(2, 2), yslices);
 %new_ep_lat = bpgrid_x_vec(q0);lat0 + bparea_span(1,1) + (bparea_span(1,2) - bparea_span(1,1))/40*p0
@@ -22,7 +22,7 @@ plotAll1(ret);
 for i = 1:numel(ret.lat)
     ret.rdis(i);
     ret.sr*ret1.timeshift(q0, p0, i);
-    ret.xori_new(i,:) = specshift(ret.xori(1,:), -ret.sr*(ret1.timeshift(q0, p0, i)-mean(ret1.ep_newtraveltime(i))));
+    ret.xori_new(i,:) = specshift(ret.xori(1,:), -ret.sr*(ret1.timeshift(q0, p0, i)-ret1.ep_newtraveltime(i)));
 %     ret.xori_new(i,:) = specshift(ret.xori(2,:), 0);
 %     plot(ret.xori_new(i,:), '*');
 %     hold on;
@@ -32,4 +32,4 @@ ret.xori = ret.xori_new;
 ret.x = ret.xori_new;
 figure;
 plotAll1(ret);
-save('eu_testshift1_2_x15y25_dip20.mat', 'ret', '-v7.3');
+save('eu_testshift1_2_x20y20_dip15.mat', 'ret', '-v7.3');
